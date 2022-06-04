@@ -1,6 +1,5 @@
 package com.example.geth.ui
 
-import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -10,23 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.paging.LoadState
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemsIndexed
-import com.example.geth.Accounts
 import com.example.geth.Ether
 import com.example.geth.SavedAccount
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AccountList(
@@ -52,7 +42,7 @@ fun AccountList(
         etherService
     }
     val savedAccounts = model?.savedAccounts?.observeAsState()
-    var savedAccountsLastIndex = 0
+    //var savedAccountsLastIndex = 0
 
     val context = LocalContext.current
     val loadedAccounts = remember {
@@ -87,7 +77,7 @@ fun AccountList(
 
             savedAccounts?.let {
                 it.value?.let {
-                    savedAccountsLastIndex = it.lastIndex
+                    //savedAccountsLastIndex = it.lastIndex
 
                     it.forEachIndexed { index, s ->
                         item {
