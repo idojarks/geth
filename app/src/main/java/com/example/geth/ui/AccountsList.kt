@@ -52,6 +52,7 @@ fun AccountList(
         etherService
     }
     val savedAccounts = model?.savedAccounts?.observeAsState()
+    var savedAccountsLastIndex = 0
 
     val context = LocalContext.current
     val loadedAccounts = remember {
