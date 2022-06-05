@@ -22,7 +22,7 @@ class HttpClient {
         val instance = HttpService.getOkHttpClientBuilder()
             .build()
 
-        private fun getAsync(url: String, callback: (ResponseBody) -> Unit) {
+        private fun getAsync(url: String, callback: (Result<ResponseBody>) -> Unit) {
             val request = Request.Builder()
                 .url(url)
                 .get()
@@ -31,20 +31,23 @@ class HttpClient {
             instance.newCall(request)
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
+                        callback(Result.failure(e))
                     }
 
                     override fun onResponse(call: Call, response: Response) {
                         if (response.isSuccessful) {
                             response.body?.let {
-                                callback(it)
+                                callback(Result.success(it))
                             }
+                        } else {
+                            callback(Result.failure(IllegalAccessException()))
                         }
                     }
                 })
         }
 
         private fun get(url: String): ResponseBody? {
-            return try {
+            return runCatching {
                 val request = Request.Builder()
                     .url(url)
                     .get()
@@ -52,17 +55,16 @@ class HttpClient {
 
                 instance.newCall(request)
                     .execute()
-                    .run {
-                        if (isSuccessful) {
-                            return@run body
-                        } else {
-                            return@run null
-                        }
-                    }
+                    .takeIf {
+                        it.isSuccessful
+                    }?.body
+            }.onFailure {
+                ExceptionHandler.onCatchException(it)
             }
-            catch (e: Exception) {
-                null
-            }
+                .onSuccess {
+
+                }
+                .getOrNull()
         }
 
         fun getJson(url: String): JSONObject? {
@@ -77,10 +79,15 @@ class HttpClient {
         }
 
         fun getJsonAsync(url: String, callback: (JSONObject) -> Unit) {
-            getAsync(url) {
-                val json = JSONObject(it.string())
-                it.close()
-                callback(json)
+            getAsync(url) { result ->
+                result.onFailure {
+
+                }
+                    .onSuccess {
+                        val json = JSONObject(it.string())
+                        it.close()
+                        callback(json)
+                    }
             }
         }
 
