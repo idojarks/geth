@@ -1,15 +1,11 @@
 package com.example.geth
 
 import android.content.Context
+import com.example.geth.http.HttpClient
 import com.example.geth.ui.EtherViewModel
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subscribers.ResourceSubscriber
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import okhttp3.*
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.json.JSONObject
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.Web3j
@@ -20,7 +16,6 @@ import org.web3j.tx.gas.DefaultGasProvider
 import org.web3j.tx.gas.StaticGasProvider
 import org.web3j.utils.Convert
 import java.io.File
-import java.io.IOException
 import java.math.BigInteger
 import java.security.Security
 

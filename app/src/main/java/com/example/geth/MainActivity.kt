@@ -7,35 +7,27 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
 import com.example.geth.ui.EtherViewModel
-import com.example.geth.ui.MainView
+import com.example.geth.ui.HomeView
 import com.example.geth.ui.theme.GethTheme
 
-class MainActivity :
-    ComponentActivity() {
+class MainActivity : ComponentActivity() {
     private val model: EtherViewModel by viewModels()
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
-        super.onCreate(
-            savedInstanceState
-        )
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         setContent {
             GethTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colors.background,
                 ) {
-                    MainView(
-                        model = model
+                    HomeView(
+                        buildModelLiveData = model.buildModel,
+                        web3ClientVersionLiveData = model.web3ClientVersion,
                     )
                 }
             }
