@@ -1,20 +1,12 @@
-package com.example.geth
+package com.example.geth.http
 
-import android.graphics.BitmapFactory
-import androidx.compose.ui.graphics.asImageBitmap
-import com.fasterxml.jackson.core.JsonParser
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
+import com.example.geth.ExceptionHandler
 import okhttp3.*
-import okhttp3.internal.closeQuietly
 import org.json.JSONObject
-import org.json.JSONTokener
 import org.web3j.protocol.http.HttpService
 import java.io.File
 import java.io.IOException
 import kotlin.io.path.Path
-import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 
 class HttpClient {
@@ -46,7 +38,7 @@ class HttpClient {
                 })
         }
 
-        private fun get(url: String): ResponseBody? {
+        private fun get(url: String): Response? {
             return runCatching {
                 val request = Request.Builder()
                     .url(url)
@@ -55,25 +47,35 @@ class HttpClient {
 
                 instance.newCall(request)
                     .execute()
-                    .takeIf {
-                        it.isSuccessful
-                    }?.body
             }.onFailure {
                 ExceptionHandler.onCatchException(it)
             }
-                .onSuccess {
-
-                }
                 .getOrNull()
         }
 
+        private fun getResponseBody(response: Response): ResponseBody? {
+            return if (response.isSuccessful) {
+                response.body
+            } else {
+                for (status in HttpStatus.values()) {
+                    if (status.code == response.code) {
+                        ExceptionHandler.onCatchException(Exception("http status ${status.code} : ${status.desc}"))
+                    }
+                }
+                null
+            }
+        }
+
         fun getJson(url: String): JSONObject? {
-            val responseBody = get(url)
+            val response = get(url)
                 ?: return null
 
-            val json = JSONObject(responseBody.string())
+            val body = getResponseBody(response)
+                ?: return null
 
-            responseBody.close()
+            val json = JSONObject(body.string())
+
+            response.close()
 
             return json
         }
@@ -95,10 +97,13 @@ class HttpClient {
             uri: String,
             filename: String,
         ): String {
-            val responseBody = get(uri)
+            val response = get(uri)
                 ?: return ""
 
-            val contentType = responseBody.contentType()
+            val body = getResponseBody(response)
+                ?: return ""
+
+            val contentType = body.contentType()
                 ?: return ""
 
             if (contentType.type != "image") {
@@ -107,9 +112,9 @@ class HttpClient {
 
             val pathname = Path("${filename}.${contentType.subtype}").absolutePathString()
 
-            File(pathname).writeBytes(responseBody.bytes())
+            File(pathname).writeBytes(body.bytes())
 
-            responseBody.close()
+            response.close()
 
             return pathname
         }
