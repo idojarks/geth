@@ -57,11 +57,10 @@ class HttpClient {
             return if (response.isSuccessful) {
                 response.body
             } else {
-                for (status in HttpStatus.values()) {
-                    if (status.code == response.code) {
-                        ExceptionHandler.onCatchException(Exception("http status ${status.code} : ${status.desc}"))
-                    }
+                findHttpStatus(response.code)?.let {
+                    ExceptionHandler.onCatchException(Exception("http status ${it.code} : ${it.desc}"))
                 }
+
                 null
             }
         }

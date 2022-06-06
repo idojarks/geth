@@ -1,5 +1,7 @@
 package com.example.geth.http
 
+import com.example.geth.ExceptionHandler
+
 enum class HttpStatus(val code: Int, val desc: String) {
     CONTINUE(100, "Continue"),
     SWITCHING_PROTOCOLS(101, "Switching Protocols"),
@@ -61,5 +63,14 @@ enum class HttpStatus(val code: Int, val desc: String) {
     INSUFFICIENT_STORAGE(507, "Insufficient Storage"),
     LOOP_DETECTED(508, "Loop Detected"),
     NOT_EXTENDED(510, "Not Extended"),
-    NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required"),;
+    NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required"),
+}
+
+fun findHttpStatus(code: Int): HttpStatus? {
+    for (status in HttpStatus.values()) {
+        if (status.code == code) {
+            return status
+        }
+    }
+    return null
 }
