@@ -7,8 +7,7 @@ import org.web3j.tx.gas.DefaultGasProvider
 import org.web3j.utils.Convert
 import java.math.BigInteger
 
-class RealtimeGasProvider() :
-    ContractGasProvider {
+class RealtimeGasProvider() : ContractGasProvider {
     override fun getGasPrice(contractFunc: String?): BigInteger {
         val minusOne = BigInteger.valueOf(-1)
 
@@ -24,6 +23,7 @@ class RealtimeGasProvider() :
             Convert.toWei(fee, Convert.Unit.GWEI)
                 .toBigInteger()
         }.getOrElse {
+            ExceptionHandler.onCatchException(it)
             minusOne
         }
     }
