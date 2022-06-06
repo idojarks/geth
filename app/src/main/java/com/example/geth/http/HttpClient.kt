@@ -14,7 +14,7 @@ class HttpClient {
         val instance = HttpService.getOkHttpClientBuilder()
             .build()
 
-        private fun getAsync(url: String, callback: (Result<ResponseBody>) -> Unit) {
+        private fun getAsync(url: String, callback: (Result<Response>) -> Unit) {
             val request = Request.Builder()
                 .url(url)
                 .get()
@@ -27,13 +27,7 @@ class HttpClient {
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            response.body?.let {
-                                callback(Result.success(it))
-                            }
-                        } else {
-                            callback(Result.failure(IllegalAccessException()))
-                        }
+                        callback(Result.success(response))
                     }
                 })
         }
@@ -82,12 +76,15 @@ class HttpClient {
         fun getJsonAsync(url: String, callback: (JSONObject) -> Unit) {
             getAsync(url) { result ->
                 result.onFailure {
-
+                    ExceptionHandler.onCatchException(it)
                 }
-                    .onSuccess {
-                        val json = JSONObject(it.string())
-                        it.close()
-                        callback(json)
+                    .onSuccess { response ->
+                        getResponseBody(response)?.let { body ->
+                            val json = JSONObject(body.string())
+                            callback(json)
+                        }
+
+                        response.close()
                     }
             }
         }
