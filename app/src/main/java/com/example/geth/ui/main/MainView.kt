@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun MainView(
@@ -60,5 +61,11 @@ fun AppBar(title: String, navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val navController = rememberNavController()
+    MainView(
+        navController = navController,
+        buildModelLiveData = MutableLiveData("test1"),
+        web3ClientVersionLiveData = MutableLiveData("test2"),
+    )
 }
 
