@@ -1,14 +1,9 @@
 package com.example.geth
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONObject
-import org.web3j.protocol.Web3j
+import com.example.geth.http.HttpClient
+import com.example.geth.http.Url
 import org.web3j.tx.gas.ContractGasProvider
 import org.web3j.tx.gas.DefaultGasProvider
-import org.web3j.tx.gas.StaticGasProvider
 import org.web3j.utils.Convert
 import java.math.BigInteger
 
@@ -17,10 +12,10 @@ class RealtimeGasProvider() :
     override fun getGasPrice(contractFunc: String?): BigInteger {
         val minusOne = BigInteger.valueOf(-1)
 
-        val json = HttpClient.getJson("https://api.gasprice.io/v1/estimates")
+        val json = HttpClient.getJson(Url().gasPrice)
             ?: return minusOne
 
-        return try {
+        return runCatching {
             val fee = json.getJSONObject("result")
                 .getJSONObject("instant")
                 .get("feeCap")
@@ -28,7 +23,7 @@ class RealtimeGasProvider() :
 
             Convert.toWei(fee, Convert.Unit.GWEI)
                 .toBigInteger()
-        } catch (e: Exception) {
+        }.getOrElse {
             minusOne
         }
     }
