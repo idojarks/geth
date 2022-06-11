@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,7 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
 import com.example.geth.ui.AccountScreen
-import com.example.geth.ui.EtherScreen
+import com.example.geth.ui.InfoScreen
 
 sealed class Screen(
     val route: String,
@@ -31,13 +31,17 @@ sealed class Screen(
     val icon: ImageVector,
     val description: String,
 ) {
-    object Ether : Screen("ether", R.string.nav_ether, Icons.Filled.Home, "ether")
+    object Info : Screen("info", R.string.nav_info, Icons.Filled.Info, "info")
     object Account : Screen("account", R.string.nav_account, Icons.Filled.AccountCircle, "account")
+    object Settings : Screen("settings", R.string.nav_settings, Icons.Filled.Settings, "settings")
 }
 
+private val navTopItems = listOf(
+    Screen.Account
+)
+
 private val items = listOf(
-    Screen.Ether,
-    Screen.Account,
+    Screen.Info,
 )
 
 @Composable
@@ -57,11 +61,12 @@ fun HomeScreen(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Ether.route,
+            startDestination = Screen.Info.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Ether.route) {
-                EtherScreen(buildModelLiveData, web3ClientVersionLiveData)
+
+            composable(Screen.Info.route) {
+                InfoScreen(buildModelLiveData, web3ClientVersionLiveData)
             }
             composable(Screen.Account.route) {
                 AccountScreen(navController)
@@ -77,6 +82,9 @@ fun TopBar(title: String) {
             Text(text = title)
         },
         actions = {
+            IconButton(onClick = { }) {
+                Icon(imageVector = Screen.Account.icon, contentDescription = "account")
+            }
             IconButton(onClick = { }) {
                 Icon(imageVector = Icons.Filled.Settings, contentDescription = "settings")
             }
