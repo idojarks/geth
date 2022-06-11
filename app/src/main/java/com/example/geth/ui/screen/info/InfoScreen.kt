@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 
 @Composable
-fun EtherScreen(
+fun InfoScreen(
     buildModelLiveData: MutableLiveData<String>,
     web3ClientVersionLiveData: MutableLiveData<String>,
 ) {
@@ -30,7 +30,7 @@ fun EtherScreen(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    EtherScreen(
+    InfoScreen(
         buildModelLiveData = MutableLiveData("test1"),
         web3ClientVersionLiveData = MutableLiveData("test2"),
     )
