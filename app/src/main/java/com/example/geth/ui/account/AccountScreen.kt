@@ -15,7 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun AccountView(navController: NavController) {
+fun AccountScreen(navController: NavController) {
     Scaffold(topBar = {
         AppBar(navController)
     }) {
@@ -48,5 +48,5 @@ fun AppBar(navController: NavController) {
 @Composable
 fun PreviewAccountView() {
     val navController = rememberNavController()
-    AccountView(navController)
+    AccountScreen(navController)
 }
