@@ -1,13 +1,11 @@
 package com.example.geth
 
+import com.example.geth.http.Url
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
-import org.web3j.protocol.Web3j
-import org.web3j.protocol.http.HttpService
 import java.math.BigInteger
 import kotlin.io.path.Path
 
@@ -23,7 +21,7 @@ class ExampleUnitTest {
 
         runBlocking {
             Ether().run {
-                init("https://ropsten.infura.io/v3/c7c3743a100841048f439743d078ea0d")
+                init(Url().infuraRopsten)
                 loadContract()
 
                 launch(Dispatchers.IO) {
@@ -34,21 +32,20 @@ class ExampleUnitTest {
             }
         }
 
-        assertEquals(filename, "output.png")
+        assertEquals(filename, "eye.png")
     }
 
     @Test
     fun getGasPrice() {
         RealtimeGasProvider().run {
-                val price = getGasPrice(null)
-                println(price)
-            }
+            getGasPrice(null)
+        }
     }
 
     @Test
     fun allArtworks() {
         Ether().run {
-            init("https://ropsten.infura.io/v3/c7c3743a100841048f439743d078ea0d")
+            init(Url().infuraRopsten)
             loadContract()
             getAllArtworks().let {
                 it.forEach {
@@ -56,10 +53,5 @@ class ExampleUnitTest {
                 }
             }
         }
-    }
-
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
     }
 }
