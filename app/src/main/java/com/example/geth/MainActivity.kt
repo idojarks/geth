@@ -9,7 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.example.geth.ui.EtherViewModel
-import com.example.geth.ui.HomeView
+import com.example.geth.ui.screen.HomeScreen
 import com.example.geth.ui.theme.GethTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background,
                 ) {
-                    HomeView(
+                    HomeScreen(
                         buildModelLiveData = model.buildModel,
                         web3ClientVersionLiveData = model.web3ClientVersion,
                     )
