@@ -10,14 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
+import com.example.geth.LiveDataContainer
 
 @Composable
-fun InfoScreen(
-    buildModelLiveData: MutableLiveData<String>,
-    web3ClientVersionLiveData: MutableLiveData<String>,
-) {
-    val buildModel = buildModelLiveData.observeAsState("")
-    val web3ClientVersion = web3ClientVersionLiveData.observeAsState("")
+fun InfoScreen() {
+    val buildModel = LiveDataContainer.buildModelLiveData.observeAsState("")
+    val web3ClientVersion = LiveDataContainer.web3ClientVersionLiveData.observeAsState("")
 
     Column(modifier = Modifier.padding(10.dp)) {
         Text(text = "build model: ${buildModel.value}")
@@ -30,9 +28,9 @@ fun InfoScreen(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    InfoScreen(
-        buildModelLiveData = MutableLiveData("test1"),
-        web3ClientVersionLiveData = MutableLiveData("test2"),
-    )
+    LiveDataContainer.buildModelLiveData = MutableLiveData("test1")
+    LiveDataContainer.web3ClientVersionLiveData = MutableLiveData("test2")
+
+    InfoScreen()
 }
 

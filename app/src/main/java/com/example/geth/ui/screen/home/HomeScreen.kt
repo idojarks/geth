@@ -1,4 +1,4 @@
-package com.example.geth.ui.screen
+package com.example.geth.ui.screen.home
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -24,69 +25,58 @@ import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
 import com.example.geth.ui.AccountScreen
 import com.example.geth.ui.InfoScreen
-
-sealed class Screen(
-    val route: String,
-    @StringRes val resourceId: Int,
-    val icon: ImageVector,
-    val description: String,
-) {
-    object Info : Screen("info", R.string.nav_info, Icons.Filled.Info, "info")
-    object Account : Screen("account", R.string.nav_account, Icons.Filled.AccountCircle, "account")
-    object Settings : Screen("settings", R.string.nav_settings, Icons.Filled.Settings, "settings")
-}
-
-private val navTopItems = listOf(
-    Screen.Account
-)
+import com.example.geth.ui.screen.HomeSubScreen
+import com.example.geth.ui.screen.Screen
+import com.example.geth.ui.screen.settings.SettingsScreen
 
 private val items = listOf(
-    Screen.Info,
+    HomeSubScreen.Info,
 )
 
 @Composable
 fun HomeScreen(
-    buildModelLiveData: MutableLiveData<String>,
-    web3ClientVersionLiveData: MutableLiveData<String>,
+    parentNavHostController: NavHostController,
 ) {
     val navController = rememberNavController()
 
     Scaffold(
         topBar = {
-            TopBar(title = "NFT Space")
+            TopBar(
+                parentNavHostController = parentNavHostController,
+                title = "NFT Space",
+            )
         },
         bottomBar = {
             BottomBar(navController = navController)
         },
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Info.route,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-
-            composable(Screen.Info.route) {
-                InfoScreen(buildModelLiveData, web3ClientVersionLiveData)
-            }
-            composable(Screen.Account.route) {
-                AccountScreen(navController)
+        NavHost(navController = navController, startDestination = HomeSubScreen.Info.route, modifier = Modifier.padding(innerPadding)) {
+            composable(HomeSubScreen.Info.route) {
+                InfoScreen()
             }
         }
     }
 }
 
 @Composable
-fun TopBar(title: String) {
+fun TopBar(
+    parentNavHostController: NavHostController,
+    title: String,
+) {
     TopAppBar(
         title = {
             Text(text = title)
         },
         actions = {
-            IconButton(onClick = { }) {
-                Icon(imageVector = Screen.Account.icon, contentDescription = "account")
+            IconButton(onClick = {
+                parentNavHostController.navigate(Screen.Account.route)
+            }) {
+                Icon(imageVector = Screen.Account.icon, contentDescription = Screen.Account.description)
             }
-            IconButton(onClick = { }) {
-                Icon(imageVector = Icons.Filled.Settings, contentDescription = "settings")
+            IconButton(onClick = {
+                parentNavHostController.navigate(Screen.Settings.route)
+            }) {
+                Icon(imageVector = Screen.Settings.icon, contentDescription = Screen.Settings.description)
             }
         },
     )
@@ -131,8 +121,5 @@ fun BottomBar(
 @Preview
 @Composable
 fun PreviewMainView() {
-    HomeScreen(
-        buildModelLiveData = MutableLiveData("test1"),
-        web3ClientVersionLiveData = MutableLiveData("test2"),
-    )
+    HomeScreen(rememberNavController())
 }
