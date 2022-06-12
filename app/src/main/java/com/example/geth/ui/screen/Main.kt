@@ -21,8 +21,6 @@ import com.example.geth.ui.InfoScreen
 import com.example.geth.ui.screen.home.HomeScreen
 import com.example.geth.ui.screen.settings.SettingsScreen
 
-
-
 @Composable
 fun MainView() {
     val navController = rememberNavController()
@@ -42,28 +40,4 @@ fun MainView() {
         }
 
     }
-}
-
-@Composable
-fun TopBar(
-    navController: NavController,
-    title: String,
-) {
-    TopAppBar(
-        title = {
-            Text(text = title)
-        },
-        actions = {
-            IconButton(onClick = {
-                navController.navigate(Screen.Account.route)
-            }) {
-                Icon(imageVector = Screen.Account.icon, contentDescription = Screen.Account.description)
-            }
-            IconButton(onClick = {
-                navController.navigate(Screen.Settings.route)
-            }) {
-                Icon(imageVector = Screen.Settings.icon, contentDescription = Screen.Settings.description)
-            }
-        },
-    )
 }
