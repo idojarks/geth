@@ -2,9 +2,11 @@ package com.example.geth
 
 import android.content.Context
 import com.example.geth.http.HttpClient
-import com.example.geth.ui.EtherViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.WalletUtils
@@ -12,8 +14,6 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.Contract
-import org.web3j.tx.gas.DefaultGasProvider
-import org.web3j.tx.gas.StaticGasProvider
 import org.web3j.utils.Convert
 import java.io.File
 import java.math.BigInteger
@@ -27,13 +27,15 @@ class Ether {
     private val account2 = "0x909E9cF3DF7C9f4E29315806741D007D7bbC97C2" // metamask pw:nemo5038
     private val contractAddress = "0x983EAD129Eb9Ee8577A7f6E15f66F282E1f42dC7"
 
-    private var contract: Contract = Contracts_Dragon721_sol_Dragon721.load(
+    private lateinit var contract: Contract /*= Contracts_Dragon721_sol_Dragon721.load(
         contractAddress,
         Web3j.build(HttpService(HttpClient.instance)),
         Credentials.create("ef1162540ed5189c7f7eb5c9bf274767e95aad0559b3920eb3dc50c35aecd465"),
         StaticGasProvider(DefaultGasProvider.GAS_PRICE, DefaultGasProvider.GAS_LIMIT),
     )
-    private var dragon721Contract = contract as Contracts_Dragon721_sol_Dragon721
+    */
+
+    private lateinit var dragon721Contract: Contracts_Dragon721_sol_Dragon721
 
     fun init(networkUrl: String? = null, viewModel: EtherViewModel? = null) {
         model = viewModel
@@ -132,9 +134,17 @@ class Ether {
 
                                 val accounts = sa.load(context)
 
-                                model?.let {
+                                model?.let { model ->
                                     launch(Dispatchers.Main) {
-                                        it.savedAccounts.value = accounts.toMutableList()
+                                        accounts.forEach { address ->
+                                            model.addAccount {
+                                                EtherAccount(
+                                                    name = "john",
+                                                    address = address,
+                                                    privateKey = "",
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }

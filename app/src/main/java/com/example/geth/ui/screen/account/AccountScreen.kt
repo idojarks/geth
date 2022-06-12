@@ -17,28 +17,32 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun AccountScreen(navController: NavController) {
     Scaffold(topBar = {
-        AppBar(navController)
+        TopAppBar(navController)
     }) {
-        Column(
-            modifier = Modifier.padding(10.dp)
-        ) {
-            Text(text = "account")
+        Column(modifier = Modifier.padding(10.dp)) {
+
             Spacer(modifier = Modifier.padding(10.dp))
         }
     }
 }
 
 @Composable
-fun AppBar(navController: NavController) {
+fun TopAppBar(navController: NavController) {
     TopAppBar(title = {
         Text(text = "Account")
     }, actions = {
-        IconButton(onClick = {}) {
+        IconButton(
+            onClick = {
+
+            },
+        ) {
             Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "add account")
         }
-        IconButton(onClick = {
-            navController.popBackStack()
-        }) {
+        IconButton(
+            onClick = {
+                navController.popBackStack()
+            },
+        ) {
             Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
         }
     })

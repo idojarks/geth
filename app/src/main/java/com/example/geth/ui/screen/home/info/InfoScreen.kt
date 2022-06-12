@@ -1,4 +1,4 @@
-package com.example.geth.ui
+package com.example.geth.ui.screen.home.info
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -6,16 +6,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
-import com.example.geth.LiveDataContainer
+import com.example.geth.EtherViewModel
+import com.example.geth.EtherViewModelInterface
 
 @Composable
-fun InfoScreen() {
-    val buildModel = LiveDataContainer.buildModelLiveData.observeAsState("")
-    val web3ClientVersion = LiveDataContainer.web3ClientVersionLiveData.observeAsState("")
+fun InfoScreen(modelInterface: EtherViewModelInterface) {
+    val buildModel = modelInterface.buildModel.observeAsState("")
+    val web3ClientVersion = modelInterface.web3ClientVersion.observeAsState("")
+    remember {
+        modelInterface.init()
+    }
 
     Column(modifier = Modifier.padding(10.dp)) {
         Text(text = "build model: ${buildModel.value}")
@@ -28,9 +32,6 @@ fun InfoScreen() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    LiveDataContainer.buildModelLiveData = MutableLiveData("test1")
-    LiveDataContainer.web3ClientVersionLiveData = MutableLiveData("test2")
-
-    InfoScreen()
+    InfoScreen(EtherViewModel.previewViewModel)
 }
 

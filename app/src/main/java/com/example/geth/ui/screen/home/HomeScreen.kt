@@ -1,19 +1,12 @@
 package com.example.geth.ui.screen.home
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -22,12 +15,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.geth.R
-import com.example.geth.ui.AccountScreen
-import com.example.geth.ui.InfoScreen
+import com.example.geth.EtherViewModel
+import com.example.geth.EtherViewModelInterface
 import com.example.geth.ui.screen.HomeSubScreen
 import com.example.geth.ui.screen.Screen
-import com.example.geth.ui.screen.settings.SettingsScreen
+import com.example.geth.ui.screen.home.info.InfoScreen
 
 private val items = listOf(
     HomeSubScreen.Info,
@@ -36,6 +28,7 @@ private val items = listOf(
 @Composable
 fun HomeScreen(
     parentNavHostController: NavHostController,
+    modelInterface: EtherViewModelInterface,
 ) {
     val navController = rememberNavController()
 
@@ -52,7 +45,7 @@ fun HomeScreen(
     ) { innerPadding ->
         NavHost(navController = navController, startDestination = HomeSubScreen.Info.route, modifier = Modifier.padding(innerPadding)) {
             composable(HomeSubScreen.Info.route) {
-                InfoScreen()
+                InfoScreen(modelInterface = modelInterface)
             }
         }
     }
@@ -121,5 +114,8 @@ fun BottomBar(
 @Preview
 @Composable
 fun PreviewMainView() {
-    HomeScreen(rememberNavController())
+    HomeScreen(
+        rememberNavController(),
+        EtherViewModel.previewViewModel,
+    )
 }
