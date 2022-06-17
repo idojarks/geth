@@ -2,10 +2,7 @@ package com.example.geth.ui.screen
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.geth.R
 
@@ -26,5 +23,15 @@ sealed class HomeSubScreen(
     val icon: ImageVector,
     val description: String,
 ) {
-    object Info : Screen("info", R.string.nav_info, Icons.Filled.Info, "info")
+    object Info : HomeSubScreen("info", R.string.nav_info, Icons.Filled.Info, "info")
+}
+
+sealed class AccountSubScreen(
+    val route: String,
+    @StringRes val resourceId: Int,
+    val icon: ImageVector,
+    val description: String,
+) {
+    object AccountList : AccountSubScreen("accountList", R.string.nav_accountList, Icons.Filled.List, "accounts")
+    object NewAccount : AccountSubScreen("newAccount", R.string.nav_newAccount, Icons.Filled.Face, "new account")
 }

@@ -9,11 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.geth.EtherAccount
-import com.example.geth.EtherViewModel
-import com.example.geth.EtherViewModelInterface
 import com.example.geth.SavedAccount
+import com.example.geth.data.EtherAccount
+import com.example.geth.data.EtherViewModelInterface
 
 @Composable
 fun AddAccount(model: EtherViewModelInterface) {
@@ -41,10 +39,4 @@ fun AddAccount(model: EtherViewModelInterface) {
             setAccount(it)
         })
     }
-}
-
-@Preview
-@Composable
-fun Preview1() {
-    AddAccount(EtherViewModel())
 }

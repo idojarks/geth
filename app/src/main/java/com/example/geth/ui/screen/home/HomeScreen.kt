@@ -15,8 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.geth.EtherViewModel
-import com.example.geth.EtherViewModelInterface
+import com.example.geth.data.EtherViewModel
+import com.example.geth.data.EtherViewModelInterface
 import com.example.geth.ui.screen.HomeSubScreen
 import com.example.geth.ui.screen.Screen
 import com.example.geth.ui.screen.home.info.InfoScreen

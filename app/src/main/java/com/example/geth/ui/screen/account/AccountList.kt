@@ -19,9 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.geth.Ether
-import com.example.geth.EtherViewModel
-import com.example.geth.EtherViewModelInterface
 import com.example.geth.SavedAccount
+import com.example.geth.data.EtherViewModel
+import com.example.geth.data.EtherViewModelInterface
 
 @Composable
 fun AccountList(model: EtherViewModelInterface) {

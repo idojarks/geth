@@ -1,52 +1,36 @@
-package com.example.geth.ui
+package com.example.geth.ui.screen.account
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.geth.ui.screen.AccountSubScreen
+import com.example.geth.ui.screen.account.sub.AccountListSubScreen
+import com.example.geth.ui.screen.account.sub.NewAccountSubScreen
 
 @Composable
-fun AccountScreen(navController: NavController) {
-    Scaffold(topBar = {
-        TopAppBar(navController)
-    }) {
-        Column(modifier = Modifier.padding(10.dp)) {
+fun AccountScreen(parentNavController: NavController) {
+    val navController = rememberNavController()
 
-            Spacer(modifier = Modifier.padding(10.dp))
+    NavHost(
+        navController = navController,
+        startDestination = AccountSubScreen.AccountList.route,
+    ) {
+        composable(route = AccountSubScreen.AccountList.route) {
+            AccountListSubScreen(
+                parentNavController = parentNavController,
+                navController = navController,
+            )
+        }
+        composable(route = AccountSubScreen.NewAccount.route) {
+            NewAccountSubScreen(navController = navController)
         }
     }
 }
 
-@Composable
-fun TopAppBar(navController: NavController) {
-    TopAppBar(title = {
-        Text(text = "Account")
-    }, actions = {
-        IconButton(
-            onClick = {
 
-            },
-        ) {
-            Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "add account")
-        }
-        IconButton(
-            onClick = {
-                navController.popBackStack()
-            },
-        ) {
-            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-        }
-    })
-}
 
 @Preview
 @Composable

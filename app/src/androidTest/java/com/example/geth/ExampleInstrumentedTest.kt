@@ -3,6 +3,7 @@ package com.example.geth
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.geth.data.AccountRepository
+import com.example.geth.data.EtherAccount
 import com.example.geth.data.add
 import com.example.geth.data.delete
 import org.junit.Assert.assertEquals

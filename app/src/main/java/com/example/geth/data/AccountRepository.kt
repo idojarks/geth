@@ -2,7 +2,6 @@ package com.example.geth.data
 
 import android.content.Context
 import android.widget.Toast
-import com.example.geth.EtherAccount
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File

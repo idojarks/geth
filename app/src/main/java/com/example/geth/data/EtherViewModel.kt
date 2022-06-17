@@ -1,8 +1,8 @@
-package com.example.geth
+package com.example.geth.data
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.geth.data.AccountRepository
+import com.example.geth.Ether
 import com.example.geth.http.Url
 
 interface EtherViewModelInterface {
@@ -18,7 +18,9 @@ interface EtherViewModelInterface {
     fun deleteAccount(account: EtherAccount)
 }
 
-class EtherViewModel : ViewModel(), EtherViewModelInterface {
+class EtherViewModel(
+    private val accountRepository: AccountRepository,
+) : ViewModel(), EtherViewModelInterface {
     companion object {
         val previewViewModel = object : EtherViewModelInterface {
             override var ether: Ether? = null
@@ -46,10 +48,6 @@ class EtherViewModel : ViewModel(), EtherViewModelInterface {
     override val buildModel = MutableLiveData("")
     override val web3ClientVersion = MutableLiveData("")
     override val accounts = MutableLiveData<List<EtherAccount>>()
-    private val accountRepository = AccountRepository(
-        MyApplication.getContext(),
-        "accountsTable",
-    )
 
     override fun init(): Boolean {
         ether = Ether()

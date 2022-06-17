@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.geth.EtherViewModelInterface
-import com.example.geth.ui.AccountScreen
+import com.example.geth.data.EtherViewModelInterface
+import com.example.geth.ui.screen.account.AccountScreen
 import com.example.geth.ui.screen.home.HomeScreen
 import com.example.geth.ui.screen.settings.SettingsScreen
 
@@ -24,7 +24,7 @@ fun MainView(modelInterface: EtherViewModelInterface) {
             )
         }
         composable(route = Screen.Account.route) {
-            AccountScreen(navController = navController)
+            AccountScreen(parentNavController = navController)
         }
         composable(route = Screen.Settings.route) {
             SettingsScreen(navController = navController)
