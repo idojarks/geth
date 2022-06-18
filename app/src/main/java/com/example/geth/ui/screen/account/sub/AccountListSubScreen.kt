@@ -18,7 +18,7 @@ import com.example.geth.ui.screen.AccountSubScreen
 
 @Composable
 fun AccountListSubScreen(
-    parentNavController: NavController,
+    mainNavController: NavController,
     navController: NavController,
 ) {
     Scaffold(
@@ -30,6 +30,7 @@ fun AccountListSubScreen(
                     )
                 },
                 actions = {
+                    // new account
                     IconButton(
                         onClick = {
                             navController.navigate(AccountSubScreen.NewAccount.route)
@@ -37,9 +38,11 @@ fun AccountListSubScreen(
                     ) {
                         Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "new account")
                     }
+                    // home
                     IconButton(
                         onClick = {
-                            parentNavController.popBackStack()
+                            navController.popBackStack(navController.graph.startDestinationId, true)
+                            mainNavController.popBackStack()
                         },
                     ) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
@@ -59,7 +62,7 @@ fun AccountListSubScreen(
 @Composable
 fun PreviewAccountList() {
     AccountListSubScreen(
-        parentNavController = rememberNavController(),
+        mainNavController = rememberNavController(),
         navController = rememberNavController(),
     )
 }

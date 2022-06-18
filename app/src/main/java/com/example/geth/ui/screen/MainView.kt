@@ -1,9 +1,11 @@
 package com.example.geth.ui.screen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.geth.data.EtherViewModel
 import com.example.geth.data.EtherViewModelInterface
 import com.example.geth.ui.screen.account.AccountScreen
 import com.example.geth.ui.screen.home.HomeScreen
@@ -19,15 +21,21 @@ fun MainView(modelInterface: EtherViewModelInterface) {
     ) {
         composable(route = Screen.Home.route) {
             HomeScreen(
-                parentNavHostController = navController,
+                mainNavController = navController,
                 modelInterface = modelInterface,
             )
         }
         composable(route = Screen.Account.route) {
-            AccountScreen(parentNavController = navController)
+            AccountScreen(mainNavController = navController)
         }
         composable(route = Screen.Settings.route) {
             SettingsScreen(navController = navController)
         }
     }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    MainView(modelInterface = EtherViewModel.previewViewModel)
 }

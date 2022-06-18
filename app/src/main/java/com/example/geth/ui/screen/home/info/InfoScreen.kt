@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -17,7 +17,7 @@ import com.example.geth.data.EtherViewModelInterface
 fun InfoScreen(modelInterface: EtherViewModelInterface) {
     val buildModel = modelInterface.buildModel.observeAsState("")
     val web3ClientVersion = modelInterface.web3ClientVersion.observeAsState("")
-    remember {
+    rememberSaveable {
         modelInterface.init()
     }
 
@@ -28,10 +28,9 @@ fun InfoScreen(modelInterface: EtherViewModelInterface) {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+private fun Preview() {
     InfoScreen(EtherViewModel.previewViewModel)
 }
 

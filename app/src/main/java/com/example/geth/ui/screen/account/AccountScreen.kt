@@ -11,19 +11,21 @@ import com.example.geth.ui.screen.account.sub.AccountListSubScreen
 import com.example.geth.ui.screen.account.sub.NewAccountSubScreen
 
 @Composable
-fun AccountScreen(parentNavController: NavController) {
+fun AccountScreen(mainNavController: NavController) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = AccountSubScreen.AccountList.route,
     ) {
+        // account list
         composable(route = AccountSubScreen.AccountList.route) {
             AccountListSubScreen(
-                parentNavController = parentNavController,
+                mainNavController = mainNavController,
                 navController = navController,
             )
         }
+        // new account
         composable(route = AccountSubScreen.NewAccount.route) {
             NewAccountSubScreen(navController = navController)
         }
