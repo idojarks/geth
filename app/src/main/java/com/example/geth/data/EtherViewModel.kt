@@ -1,8 +1,10 @@
 package com.example.geth.data
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.geth.Ether
+import com.example.geth.MyApplication
 import com.example.geth.http.Url
 
 interface EtherViewModelInterface {
@@ -16,6 +18,8 @@ interface EtherViewModelInterface {
     fun loadAccounts()
     fun addAccount(block: () -> EtherAccount)
     fun deleteAccount(account: EtherAccount)
+
+    fun getBalance(account: EtherAccount): String
 }
 
 class EtherViewModel(
@@ -39,8 +43,9 @@ class EtherViewModel(
             }
 
             override fun deleteAccount(account: EtherAccount) {
-
             }
+
+            override fun getBalance(account: EtherAccount): String = ""
         }
     }
 
@@ -67,4 +72,16 @@ class EtherViewModel(
     override fun deleteAccount(account: EtherAccount) {
         accounts.value = accountRepository.deleteAccount(account)
     }
+
+    override fun getBalance(account: EtherAccount): String {
+        return checkNotNull(ether).getBalance(account.address)
+    }
+}
+
+val LocalEtherViewModelProvider = compositionLocalOf {
+    EtherViewModel(AccountRepository(
+        MyApplication.getContext(),
+        "AccountTable",
+    ))
+    //{ error("CompositionLocal LocalEtherViewModelProvider not present") }
 }

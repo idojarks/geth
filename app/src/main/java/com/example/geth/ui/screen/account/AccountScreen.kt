@@ -27,11 +27,12 @@ fun AccountScreen(mainNavController: NavController) {
         }
         // new account
         composable(route = AccountSubScreen.NewAccount.route) {
-            NewAccountSubScreen(navController = navController)
+            NewAccountSubScreen(
+                navController = navController,
+            )
         }
     }
 }
-
 
 
 @Preview

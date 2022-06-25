@@ -114,12 +114,12 @@ class Ether {
         return accounts.toList()
     }
 
-    fun getBalance(account: String): String {
+    fun getBalance(address: String): String {
         return runBlocking {
             val channel = Channel<String>()
 
             launch(Dispatchers.IO) {
-                web3.ethGetBalance(account, DefaultBlockParameterName.LATEST)
+                web3.ethGetBalance(address, DefaultBlockParameterName.LATEST)
                     .flowable()
                     .subscribe({ result ->
                         launch {
@@ -132,7 +132,7 @@ class Ether {
                                 val sa = SavedAccount()
                                 val context = MyApplication.getContext()
 
-                                sa.delete(context, account)
+                                sa.delete(context, address)
 
                                 val accounts = sa.load(context)
 

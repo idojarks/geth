@@ -15,8 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
-import com.example.geth.data.EtherViewModel
-import com.example.geth.data.EtherViewModelInterface
 import com.example.geth.ui.screen.HomeSubScreen
 import com.example.geth.ui.screen.Screen
 import com.example.geth.ui.screen.home.info.InfoScreen
@@ -28,7 +26,6 @@ private val items = listOf(
 @Composable
 fun HomeScreen(
     mainNavController: NavHostController,
-    modelInterface: EtherViewModelInterface,
 ) {
     val navController = rememberNavController()
 
@@ -94,7 +91,7 @@ fun HomeScreen(
         ) {
             // info screen
             composable(HomeSubScreen.Info.route) {
-                InfoScreen(modelInterface = modelInterface)
+                InfoScreen()
             }
         }
     }
@@ -105,6 +102,5 @@ fun HomeScreen(
 fun PreviewMainView() {
     HomeScreen(
         rememberNavController(),
-        EtherViewModel.previewViewModel,
     )
 }

@@ -11,22 +11,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.geth.EtherViewModelFactory
 import com.example.geth.R
-import com.example.geth.data.AccountRepository
 import com.example.geth.data.EtherAccount
-import com.example.geth.data.EtherViewModel
+import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.ui.screen.AccountSubScreen
 import com.example.geth.web3.Web3Utils
 
@@ -34,6 +29,8 @@ import com.example.geth.web3.Web3Utils
 fun NewAccountSubScreen(
     navController: NavController,
 ) {
+    val model = LocalEtherViewModelProvider.current
+
     // name
     val (name, setName) = remember {
         mutableStateOf(TextFieldValue(""))
@@ -70,19 +67,6 @@ fun NewAccountSubScreen(
     val (defaultAccount, setDefaultAccount) = remember {
         mutableStateOf(false)
     }
-
-    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-        "no view model store owner"
-    }
-    val model = viewModel<EtherViewModel>(
-        viewModelStoreOwner = viewModelStoreOwner,
-        factory = EtherViewModelFactory(
-            accountRepository = AccountRepository(
-                context = LocalContext.current,
-                filename = "accountTable",
-            ),
-        ),
-    )
 
     Scaffold(
         topBar = {
@@ -233,11 +217,12 @@ fun NewAccountSubScreen(
     }
 }
 
-
 @Preview
 @Composable
 fun PreviewNewAccount() {
     val navController = rememberNavController()
-    NewAccountSubScreen(navController = navController)
+    NewAccountSubScreen(
+        navController = navController,
+    )
 }
 

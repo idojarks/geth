@@ -5,14 +5,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.geth.data.EtherViewModel
-import com.example.geth.data.EtherViewModelInterface
 import com.example.geth.ui.screen.account.AccountScreen
 import com.example.geth.ui.screen.home.HomeScreen
 import com.example.geth.ui.screen.settings.SettingsScreen
 
 @Composable
-fun MainView(modelInterface: EtherViewModelInterface) {
+fun MainView() {
     val navController = rememberNavController()
 
     NavHost(
@@ -22,7 +20,6 @@ fun MainView(modelInterface: EtherViewModelInterface) {
         composable(route = Screen.Home.route) {
             HomeScreen(
                 mainNavController = navController,
-                modelInterface = modelInterface,
             )
         }
         composable(route = Screen.Account.route) {
@@ -37,5 +34,5 @@ fun MainView(modelInterface: EtherViewModelInterface) {
 @Preview
 @Composable
 private fun Preview() {
-    MainView(modelInterface = EtherViewModel.previewViewModel)
+    MainView()
 }

@@ -71,7 +71,7 @@ class AccountRepository(
             return
         }
 
-        for (i in 0..array.length()) {
+        for (i in 0 until array.length()) {
             val account = array.getJSONObject(i)
             EtherAccount(
                 name = account.get("name")

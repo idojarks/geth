@@ -10,15 +10,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.geth.data.EtherViewModel
-import com.example.geth.data.EtherViewModelInterface
+import com.example.geth.data.LocalEtherViewModelProvider
 
 @Composable
-fun InfoScreen(modelInterface: EtherViewModelInterface) {
-    val buildModel = modelInterface.buildModel.observeAsState("")
-    val web3ClientVersion = modelInterface.web3ClientVersion.observeAsState("")
+fun InfoScreen() {
+    val model = LocalEtherViewModelProvider.current
+    val buildModel = model.buildModel.observeAsState("")
+    val web3ClientVersion = model.web3ClientVersion.observeAsState("")
+
     rememberSaveable {
-        modelInterface.init()
+        model.init()
     }
 
     Column(modifier = Modifier.padding(10.dp)) {
@@ -31,6 +32,6 @@ fun InfoScreen(modelInterface: EtherViewModelInterface) {
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-    InfoScreen(EtherViewModel.previewViewModel)
+    InfoScreen()
 }
 
