@@ -1,5 +1,6 @@
 package com.example.geth.ui.screen.account.sub
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,10 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.geth.data.EtherAccount
-import com.example.geth.data.EtherViewModelInterface
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.*
 import com.example.geth.ui.screen.AccountSubScreen
 
 @Composable
@@ -67,10 +66,9 @@ fun AccountListSubScreen(
         },
     ) {
         LazyColumn {
-            accounts.value?.forEachIndexed { index, etherAccount ->
+            accounts.value?.forEachIndexed { _, etherAccount ->
                 item {
                     Account(
-                        index = index,
                         account = etherAccount,
                         model = model,
                     )
@@ -82,21 +80,34 @@ fun AccountListSubScreen(
 
 @Composable
 fun Account(
-    index: Int,
     account: EtherAccount,
     model: EtherViewModelInterface,
 ) {
+    val borderStroke = if (account.isDefault) {
+        BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colors.primaryVariant,
+        )
+    } else {
+        null
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(15.dp),
+            .padding(12.dp),
+        border = borderStroke,
     ) {
-        Column {
+        Column(
+            modifier = Modifier.padding(6.dp),
+        ) {
             Text(
-                text = "index: $index",
-                fontSize = 10.sp,
+                text = account.name,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier.padding(6.dp),
                 fontStyle = FontStyle.Italic,
-                color = MaterialTheme.colors.secondary,
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
@@ -104,10 +115,11 @@ fun Account(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.primary,
+                modifier = Modifier.padding(6.dp),
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Row(
-                modifier = Modifier.padding(5.dp),
+                modifier = Modifier.padding(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val (balance, setBalance) = remember {
@@ -133,8 +145,31 @@ fun Account(
 @Preview
 @Composable
 fun PreviewAccountList() {
-    AccountListSubScreen(
-        mainNavController = rememberNavController(),
-        navController = rememberNavController(),
+    val model = EtherViewModel(
+        accountRepository = AccountRepository(
+            context = LocalContext.current,
+            filename = "accountTable",
+        ),
     )
+
+    Account(
+        account = EtherAccount(
+            name = "john",
+            address = "adfa",
+            privateKey = "dsfsd",
+            isDefault = false,
+        ),
+        model = model,
+    )
+    /*
+    CompositionLocalProvider(
+        LocalEtherViewModelProvider provides model,
+    ) {
+        AccountListSubScreen(
+            mainNavController = rememberNavController(),
+            navController = rememberNavController(),
+        )
+    }
+
+     */
 }

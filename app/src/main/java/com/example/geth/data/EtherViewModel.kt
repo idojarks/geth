@@ -15,7 +15,7 @@ interface EtherViewModelInterface {
 
     fun init(): Boolean
 
-    fun loadAccounts()
+    fun loadAccounts(): List<EtherAccount>
     fun addAccount(block: () -> EtherAccount)
     fun deleteAccount(account: EtherAccount)
 
@@ -36,7 +36,8 @@ class EtherViewModel(
                 return true
             }
 
-            override fun loadAccounts() {
+            override fun loadAccounts(): List<EtherAccount> {
+                return emptyList()
             }
 
             override fun addAccount(block: () -> EtherAccount) {
@@ -61,8 +62,10 @@ class EtherViewModel(
         return true
     }
 
-    override fun loadAccounts() {
-        accounts.value = accountRepository.getAccounts()
+    override fun loadAccounts(): List<EtherAccount> {
+        val list = accountRepository.getAccounts()
+        accounts.value = list
+        return list
     }
 
     override fun addAccount(block: () -> EtherAccount) {
