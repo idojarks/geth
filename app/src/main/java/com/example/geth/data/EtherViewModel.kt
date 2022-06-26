@@ -4,7 +4,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.geth.Ether
-import com.example.geth.MyApplication
+import com.example.geth.data.account.AccountRepository
+import com.example.geth.data.account.EtherAccount
 import com.example.geth.http.Url
 
 interface EtherViewModelInterface {
@@ -25,6 +26,7 @@ interface EtherViewModelInterface {
 class EtherViewModel(
     private val accountRepository: AccountRepository,
 ) : ViewModel(), EtherViewModelInterface {
+    /*
     companion object {
         val previewViewModel = object : EtherViewModelInterface {
             override var ether: Ether? = null
@@ -49,6 +51,8 @@ class EtherViewModel(
             override fun getBalance(account: EtherAccount): String = ""
         }
     }
+
+     */
 
     override var ether: Ether? = null
     override val buildModel = MutableLiveData("")
@@ -79,12 +83,15 @@ class EtherViewModel(
     override fun getBalance(account: EtherAccount): String {
         return checkNotNull(ether).getBalance(account.address)
     }
+
+    fun getDefaultAccount(): EtherAccount? {
+        return accountRepository.getAccounts()
+            .find {
+                it.isDefault
+            }
+    }
 }
 
-val LocalEtherViewModelProvider = compositionLocalOf {
-    EtherViewModel(AccountRepository(
-        MyApplication.getContext(),
-        "AccountTable",
-    ))
-    //{ error("CompositionLocal LocalEtherViewModelProvider not present") }
+val LocalEtherViewModelProvider = compositionLocalOf<EtherViewModel> {
+    error("LocalEtherViewModelProvider not provide default factory")
 }

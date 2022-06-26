@@ -5,15 +5,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.account.EtherAccount
+import com.example.geth.data.account.InspectionModeAccountRepository
 
 @Composable
 fun InfoScreen() {
+    if (LocalInspectionMode.current) {
+        return
+    }
+
     val model = LocalEtherViewModelProvider.current
     val buildModel = model.buildModel.observeAsState("")
     val web3ClientVersion = model.web3ClientVersion.observeAsState("")
@@ -29,9 +38,21 @@ fun InfoScreen() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview()
 @Composable
 private fun Preview() {
-    InfoScreen()
+    val model = EtherViewModel(
+        accountRepository = InspectionModeAccountRepository(mutableListOf(
+            EtherAccount(
+                name = "john",
+                address = "0x000000",
+                privateKey = "0x11111",
+            ),
+        )),
+    )
+
+    CompositionLocalProvider(LocalEtherViewModelProvider provides model) {
+        InfoScreen()
+    }
 }
 

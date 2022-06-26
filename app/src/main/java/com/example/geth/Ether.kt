@@ -1,8 +1,8 @@
 package com.example.geth
 
 import android.content.Context
-import com.example.geth.data.EtherAccount
 import com.example.geth.data.EtherViewModel
+import com.example.geth.data.account.EtherAccount
 import com.example.geth.http.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

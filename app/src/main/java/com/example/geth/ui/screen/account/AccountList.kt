@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.geth.Ether
 import com.example.geth.SavedAccount
-import com.example.geth.data.EtherViewModel
 import com.example.geth.data.EtherViewModelInterface
 
 @Composable
@@ -145,19 +144,5 @@ fun Account(
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    val vm = EtherViewModel.previewViewModel
-    vm.init()
-    /*
-    val etherService = Ether().also {
-        it.init(
-            Url().infuraRopsten,
-            viewModel = vm,
-        )
-    }
 
-     */
-
-    AccountList(
-        model = vm,
-    )
 }

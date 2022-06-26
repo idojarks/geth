@@ -1,4 +1,4 @@
-package com.example.geth.data
+package com.example.geth.data.account
 
 import android.content.Context
 import android.widget.Toast
@@ -6,19 +6,19 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-class AccountRepository(
+class FileAccountRepository(
     private val context: Context,
     private val filename: String,
-) {
+) : AccountRepository {
     private val accounts = mutableListOf<EtherAccount>()
 
-    fun getAccounts(): List<EtherAccount> {
+    override fun getAccounts(): List<EtherAccount> {
         loadIfAccountsEmpty()
 
         return accounts
     }
 
-    fun addAccount(account: EtherAccount): List<EtherAccount> {
+    override fun addAccount(account: EtherAccount): List<EtherAccount> {
         account.validateBeforeUse()
         loadIfAccountsEmpty()
 
@@ -35,7 +35,7 @@ class AccountRepository(
         return accounts
     }
 
-    fun deleteAccount(account: EtherAccount): List<EtherAccount> {
+    override fun deleteAccount(account: EtherAccount): List<EtherAccount> {
         account.validateBeforeUse()
         accounts.remove(account)
         updateAccountsToFile()
@@ -124,10 +124,3 @@ fun EtherAccount.validateBeforeUse() {
     }
 }
 
-infix fun AccountRepository.add(account: EtherAccount): List<EtherAccount> {
-    return addAccount(account)
-}
-
-infix fun AccountRepository.delete(account: EtherAccount): List<EtherAccount> {
-    return deleteAccount(account)
-}

@@ -10,8 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import com.example.geth.SavedAccount
-import com.example.geth.data.EtherAccount
 import com.example.geth.data.EtherViewModelInterface
+import com.example.geth.data.account.EtherAccount
 
 @Composable
 fun AddAccount(model: EtherViewModelInterface) {

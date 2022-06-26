@@ -12,16 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import com.example.geth.data.AccountRepository
 import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.account.AccountRepository
+import com.example.geth.data.account.FileAccountRepository
 import com.example.geth.ui.screen.MainView
 import com.example.geth.ui.theme.GethTheme
 
 class MainActivity : ComponentActivity() {
     private val model: EtherViewModel by viewModels {
         EtherViewModelFactory(
-            accountRepository = AccountRepository(
+            accountRepository = FileAccountRepository(
                 context = applicationContext,
                 filename = "accountTable",
             ),

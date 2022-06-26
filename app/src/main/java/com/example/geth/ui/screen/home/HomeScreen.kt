@@ -3,6 +3,7 @@ package com.example.geth.ui.screen.home
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,6 +16,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
+import com.example.geth.data.EtherViewModel
+import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.account.EtherAccount
+import com.example.geth.data.account.InspectionModeAccountRepository
 import com.example.geth.ui.screen.HomeSubScreen
 import com.example.geth.ui.screen.Screen
 import com.example.geth.ui.screen.home.info.InfoScreen
@@ -27,6 +32,7 @@ private val items = listOf(
 fun HomeScreen(
     mainNavController: NavHostController,
 ) {
+    val model = LocalEtherViewModelProvider.current
     val navController = rememberNavController()
 
     Scaffold(
@@ -36,6 +42,12 @@ fun HomeScreen(
                     Text(text = stringResource(id = R.string.app_name))
                 },
                 actions = {
+                    // default account
+                    model.getDefaultAccount()
+                        ?.let {
+                            Text(text = it.name)
+                        }
+
                     // account screen
                     IconButton(onClick = {
                         mainNavController.navigate(Screen.Account.route)
@@ -100,7 +112,22 @@ fun HomeScreen(
 @Preview
 @Composable
 fun PreviewMainView() {
-    HomeScreen(
-        rememberNavController(),
+    val model = EtherViewModel(
+        accountRepository = InspectionModeAccountRepository(mutableListOf(
+            EtherAccount(
+                name = "john",
+                address = "0x000000",
+                privateKey = "0x11111",
+                isDefault = true,
+            ),
+        )),
     )
+
+    CompositionLocalProvider(
+        LocalEtherViewModelProvider provides model,
+    ) {
+        HomeScreen(
+            rememberNavController(),
+        )
+    }
 }

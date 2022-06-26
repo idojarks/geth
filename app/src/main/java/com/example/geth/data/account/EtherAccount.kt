@@ -1,4 +1,4 @@
-package com.example.geth.data
+package com.example.geth.data.account
 
 data class EtherAccount(
     val name: String,
