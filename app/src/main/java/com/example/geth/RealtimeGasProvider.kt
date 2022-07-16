@@ -1,7 +1,7 @@
 package com.example.geth
 
-import com.example.geth.http.HttpClient
-import com.example.geth.http.Url
+import com.example.geth.data.EtherUrl
+import com.example.geth.service.http.HttpClient
 import org.web3j.tx.gas.ContractGasProvider
 import org.web3j.tx.gas.DefaultGasProvider
 import org.web3j.utils.Convert
@@ -11,7 +11,7 @@ class RealtimeGasProvider() : ContractGasProvider {
     override fun getGasPrice(contractFunc: String?): BigInteger {
         val minusOne = BigInteger.valueOf(-1)
 
-        val json = HttpClient.getJson(Url().gasPrice)
+        val json = HttpClient.getJson(EtherUrl.gasPrice)
             ?: return minusOne
 
         return runCatching {

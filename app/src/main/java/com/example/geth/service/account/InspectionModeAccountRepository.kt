@@ -1,4 +1,6 @@
-package com.example.geth.data.account
+package com.example.geth.service.account
+
+import com.example.geth.data.EtherAccount
 
 class InspectionModeAccountRepository(
     private val accounts: MutableList<EtherAccount>,

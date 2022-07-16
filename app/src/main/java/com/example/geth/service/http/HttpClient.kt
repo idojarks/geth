@@ -1,4 +1,4 @@
-package com.example.geth.http
+package com.example.geth.service.http
 
 import com.example.geth.ExceptionHandler
 import okhttp3.*
@@ -113,6 +113,28 @@ class HttpClient {
             response.close()
 
             return pathname
+        }
+
+        fun getTokenImageUrl(
+            uri: String,
+        ): String? {
+            val metadata = "$uri/metadata.json"
+
+            val response = get(metadata)
+                ?: return null
+
+            val body = getResponseBody(response)
+                ?: return null
+
+            val json = JSONObject(body.string())
+            val imageUri = json.get("image")
+                .toString()
+                .replace("ipfs://", "")
+
+            val lastSlashIndex = uri.lastIndexOf('/')
+            val baseUrl = uri.slice(0..lastSlashIndex)
+
+            return "$baseUrl$imageUri"
         }
     }
 }

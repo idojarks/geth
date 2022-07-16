@@ -3,93 +3,78 @@ package com.example.geth.data
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.geth.Ether
-import com.example.geth.data.account.AccountRepository
-import com.example.geth.data.account.EtherAccount
-import com.example.geth.http.Url
-
-interface EtherViewModelInterface {
-    var ether: Ether?
-    val buildModel: MutableLiveData<String>
-    val web3ClientVersion: MutableLiveData<String>
-    val accounts: MutableLiveData<List<EtherAccount>>
-
-    fun init(): Boolean
-
-    fun loadAccounts(): List<EtherAccount>
-    fun addAccount(block: () -> EtherAccount)
-    fun deleteAccount(account: EtherAccount)
-
-    fun getBalance(account: EtherAccount): String
-}
+import com.example.geth.service.account.AccountRepository
+import com.example.geth.service.blockchain.Dragon721Service
 
 class EtherViewModel(
-    private val accountRepository: AccountRepository,
-) : ViewModel(), EtherViewModelInterface {
-    /*
-    companion object {
-        val previewViewModel = object : EtherViewModelInterface {
-            override var ether: Ether? = null
-            override val buildModel: MutableLiveData<String> = MutableLiveData("test1")
-            override val web3ClientVersion: MutableLiveData<String> = MutableLiveData("test2")
-            override val accounts: MutableLiveData<List<EtherAccount>> = MutableLiveData(listOf(EtherAccount("john", "0x00", "0x00")))
+    val accountRepository: AccountRepository,
+    val dragon721Service: Dragon721Service,
+) : ViewModel() {
+    val accounts = MutableLiveData<List<EtherAccount>>()
+    val defaultAccount = MutableLiveData<EtherAccount>()
+    val isChangeDefaultAccount = MutableLiveData(false)
+    val tokenSymbol = MutableLiveData("")
+    val tokenUrlList = MutableLiveData(mutableListOf<String>())
 
-            override fun init(): Boolean {
-                return true
-            }
-
-            override fun loadAccounts(): List<EtherAccount> {
-                return emptyList()
-            }
-
-            override fun addAccount(block: () -> EtherAccount) {
-            }
-
-            override fun deleteAccount(account: EtherAccount) {
-            }
-
-            override fun getBalance(account: EtherAccount): String = ""
-        }
-    }
-
-     */
-
-    override var ether: Ether? = null
-    override val buildModel = MutableLiveData("")
-    override val web3ClientVersion = MutableLiveData("")
-    override val accounts = MutableLiveData<List<EtherAccount>>()
-
-    override fun init(): Boolean {
-        ether = Ether()
-        ether?.init(Url().infuraRopsten, this)
-
-        return true
-    }
-
-    override fun loadAccounts(): List<EtherAccount> {
+    fun loadAccounts(): List<EtherAccount> {
         val list = accountRepository.getAccounts()
         accounts.value = list
         return list
     }
 
-    override fun addAccount(block: () -> EtherAccount) {
+    fun addAccount(block: () -> EtherAccount) {
         accounts.value = accountRepository.addAccount(block())
     }
 
-    override fun deleteAccount(account: EtherAccount) {
+    fun deleteAccount(account: EtherAccount) {
         accounts.value = accountRepository.deleteAccount(account)
     }
 
-    override fun getBalance(account: EtherAccount): String {
-        return checkNotNull(ether).getBalance(account.address)
-    }
-
-    fun getDefaultAccount(): EtherAccount? {
-        return accountRepository.getAccounts()
+    fun loadDefaultAccount() {
+        defaultAccount.value = accountRepository.getAccounts()
             .find {
                 it.isDefault
             }
     }
+
+    fun loadDefaultAccountInCoroutine() {
+        accountRepository.getAccounts()
+            .find {
+                if (it.isDefault) {
+                    println("default account loaded : $it")
+                }
+
+                it.isDefault
+            }
+            ?.let {
+                defaultAccount.postValue(it)
+            }
+    }
+
+/*
+    fun loadContract(
+        contractAddress: String,
+        privateKey: String,
+    ): Contract {
+        return dragon721Service.loadContract(
+            contractAddress = contractAddress,
+            privateKey = privateKey,
+        )
+    }
+
+    fun getBalance(address: String): String {
+        return dragon721Service.getBalance(address = address)
+    }
+
+    fun getSymbol(): String {
+        return dragon721Service.getSymbol()
+    }
+
+    fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
+        return dragon721Service.getAllArtworks()
+    }
+
+ */
 }
 
 val LocalEtherViewModelProvider = compositionLocalOf<EtherViewModel> {

@@ -1,6 +1,4 @@
-package com.example.geth.http
-
-import com.example.geth.ExceptionHandler
+package com.example.geth.service.http
 
 enum class HttpStatus(val code: Int, val desc: String) {
     CONTINUE(100, "Continue"),

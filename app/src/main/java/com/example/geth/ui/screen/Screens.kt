@@ -24,6 +24,7 @@ sealed class HomeSubScreen(
     val description: String,
 ) {
     object Info : HomeSubScreen("info", R.string.nav_info, Icons.Filled.Info, "info")
+    object Dragon721Tokens : HomeSubScreen("dragon721Tokens", R.string.nav_dragon721Tokens, Icons.Filled.List, "tokens")
 }
 
 sealed class AccountSubScreen(

@@ -1,7 +1,8 @@
-package com.example.geth.data.account
+package com.example.geth.service.account
 
 import android.content.Context
 import android.widget.Toast
+import com.example.geth.data.EtherAccount
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -80,6 +81,9 @@ class FileAccountRepository(
                     .toString(),
                 privateKey = account.get("pk")
                     .toString(),
+                isDefault = account.get("isDefault")
+                    .toString()
+                    .toBoolean(),
             ).also {
                 accounts.add(it)
             }
@@ -101,6 +105,7 @@ class FileAccountRepository(
                     JSONObject().put("name", etherAccount.name)
                         .put("address", etherAccount.address)
                         .put("pk", etherAccount.privateKey)
+                        .put("isDefault", etherAccount.isDefault)
                         .also {
                             array.put(index, it)
                         }

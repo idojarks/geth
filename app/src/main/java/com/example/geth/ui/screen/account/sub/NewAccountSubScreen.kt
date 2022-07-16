@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
+import com.example.geth.data.EtherAccount
 import com.example.geth.data.LocalEtherViewModelProvider
-import com.example.geth.data.account.EtherAccount
 import com.example.geth.ui.screen.AccountSubScreen
 import com.example.geth.web3.Web3Utils
 

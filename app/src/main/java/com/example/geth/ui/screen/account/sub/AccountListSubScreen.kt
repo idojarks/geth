@@ -20,11 +20,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.geth.data.EtherAccount
 import com.example.geth.data.EtherViewModel
-import com.example.geth.data.EtherViewModelInterface
 import com.example.geth.data.LocalEtherViewModelProvider
-import com.example.geth.data.account.EtherAccount
-import com.example.geth.data.account.InspectionModeAccountRepository
+import com.example.geth.service.account.InspectionModeAccountRepository
+import com.example.geth.service.blockchain.InspectionModeDragon721Service
 import com.example.geth.ui.screen.AccountSubScreen
 
 @Composable
@@ -84,7 +84,7 @@ fun AccountListSubScreen(
 @Composable
 fun Account(
     account: EtherAccount,
-    model: EtherViewModelInterface,
+    model: EtherViewModel,
 ) {
     val borderStroke = if (account.isDefault) {
         BorderStroke(
@@ -131,7 +131,7 @@ fun Account(
 
                 Button(
                     onClick = {
-                        setBalance(model.getBalance(account))
+                        setBalance(model.dragon721Service.getBalance(account.address))
                     },
                 ) {
                     Text(text = "Balance")
@@ -148,15 +148,13 @@ fun Account(
 @Preview
 @Composable
 fun PreviewAccountList() {
-    val model = EtherViewModel(
-        accountRepository = InspectionModeAccountRepository(mutableListOf(
-            EtherAccount(
-                name = "john",
-                address = "0x000000",
-                privateKey = "0x11111",
-            ),
-        )),
-    )
+    val model = EtherViewModel(accountRepository = InspectionModeAccountRepository(mutableListOf(
+        EtherAccount(
+            name = "john",
+            address = "0x000000",
+            privateKey = "0x11111",
+        ),
+    )), dragon721Service = InspectionModeDragon721Service())
 
     Account(
         account = EtherAccount(

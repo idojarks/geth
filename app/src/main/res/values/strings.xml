@@ -6,5 +6,6 @@
     <string name="nav_settings">Settings</string>
     <string name="nav_accountList">Accounts</string>
     <string name="nav_newAccount">NewAccount</string>
+    <string name="nav_dragon721Tokens">Dragon721Tokens</string>
     <string name="nav_registerAccount">Register</string>
 </resources>

@@ -1,89 +1,47 @@
-package com.example.geth
+package com.example.geth.service.blockchain
 
-import android.content.Context
-import com.example.geth.data.EtherViewModel
-import com.example.geth.data.account.EtherAccount
-import com.example.geth.http.HttpClient
+import com.example.geth.Contracts_Dragon721_sol_Dragon721
+import com.example.geth.RealtimeGasProvider
+import com.example.geth.data.EtherUrl
+import com.example.geth.service.http.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.web3j.crypto.Credentials
-import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.http.HttpService
-import org.web3j.tx.Contract
 import org.web3j.utils.Convert
-import java.io.File
 import java.math.BigInteger
-import java.security.Security
 
-class Ether {
-    private lateinit var web3: Web3j
+class Web3Dragon721Service : Dragon721Service {
+    private val web3: Web3j
     private val accounts = mutableListOf<String>()
-    private var model: EtherViewModel? = null
-    private val account1 = "0x9AaB9CAE534599A024fe48A5EE7331CDf2b7cCd9"
-    private val account2 = "0x909E9cF3DF7C9f4E29315806741D007D7bbC97C2" // metamask pw:nemo5038
-    private val contractAddress = "0x983EAD129Eb9Ee8577A7f6E15f66F282E1f42dC7"
+    private var dragon721Contract: Contracts_Dragon721_sol_Dragon721? = null
 
-    private lateinit var contract: Contract /*= Contracts_Dragon721_sol_Dragon721.load(
-        contractAddress,
-        Web3j.build(HttpService(HttpClient.instance)),
-        Credentials.create("ef1162540ed5189c7f7eb5c9bf274767e95aad0559b3920eb3dc50c35aecd465"),
-        StaticGasProvider(DefaultGasProvider.GAS_PRICE, DefaultGasProvider.GAS_LIMIT),
-    )
-    */
+    init {
+        val url = StringBuilder(EtherUrl.infuraRopsten)
 
-    private lateinit var dragon721Contract: Contracts_Dragon721_sol_Dragon721
-
-    fun init(networkUrl: String? = null, viewModel: EtherViewModel? = null) {
-        model = viewModel
-
-        viewModel?.let {
-            it.buildModel.value = android.os.Build.MODEL
+        if (url.isEmpty()) {
+            val newEtherUrl = EtherUrl.getLocalEthUrl()
+            url.append(newEtherUrl)
         }
 
-        runBlocking {
-            val channel = Channel<String>()
-
-            launch(Dispatchers.IO) {
-                val url = networkUrl
-                    ?: if (android.os.Build.MODEL.contains("emulator", true)) "http://10.0.2.2:8545" else "http://221.138.108.203:8545" //"http://10.0.2.2:8545" <- 에뮬레이터에서 PC의 localhost로 접속
-
-                web3 = Web3j.build(HttpService(url, HttpClient.instance))
-                    .also {
-                        it.web3ClientVersion()
-                            .flowable()
-                            .subscribe({
-                                launch {
-                                    channel.send(it.web3ClientVersion)
-                                    channel.close()
-                                }
-                            }, {
-                                launch {
-                                    channel.send(it.message
-                                        ?: "unknown error.")
-                                    channel.close()
-                                }
-                            })
-                            .dispose()
-                    }
-            }
-
-            for (msg in channel) {
-                viewModel?.let {
-                    it.web3ClientVersion.value = msg
-                }
-            }
-        }
-
-        println("ether initialized.")
+        web3 = Web3j.build(HttpService(url.toString(), HttpClient.instance))
     }
 
-    fun getAccounts(): List<String> {
+    override fun getVersion(): String {
+        return runCatching {
+            runBlocking(Dispatchers.IO) {
+                web3.web3ClientVersion()
+                    .send().web3ClientVersion
+            }
+        }.getOrDefault("error")
+    }
+
+    override fun getAccounts(): List<String> {
         runBlocking {
             val channel = Channel<String>()
 
@@ -114,7 +72,7 @@ class Ether {
         return accounts.toList()
     }
 
-    fun getBalance(address: String): String {
+    override fun getBalance(address: String): String {
         return runBlocking {
             val channel = Channel<String>()
 
@@ -128,27 +86,8 @@ class Ether {
 
                                 channel.send(balance.toString())
                                 channel.close()
-                            } catch (e: org.web3j.exceptions.MessageDecodingException) {
-                                val sa = SavedAccount()
-                                val context = MyApplication.getContext()
-
-                                sa.delete(context, address)
-
-                                val accounts = sa.load(context)
-
-                                model?.let { model ->
-                                    launch(Dispatchers.Main) {
-                                        accounts.forEach { address ->
-                                            model.addAccount {
-                                                EtherAccount(
-                                                    name = "john",
-                                                    address = address,
-                                                    privateKey = "",
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
+                            }
+                            catch (e: org.web3j.exceptions.MessageDecodingException) {
                             }
                         }
                     }, {
@@ -163,8 +102,8 @@ class Ether {
             return@runBlocking channel.receive()
         }
     }
-
-    fun loadContract(context: Context): Contract? {
+/*
+    fun loadDragon721Contract(context: Context): Contract? {
         val password = "1212"
         val filename = "wallet"
         val file = File(context.filesDir, filename)
@@ -180,14 +119,15 @@ class Ether {
         if (!file.exists()) {
             try {
                 WalletUtils.generateNewWalletFile(password, file)
-            } catch (e: Exception) {
+            }
+            catch (e: Exception) {
                 println(e.message)
             }
         }
 
         val credentials = WalletUtils.loadCredentials(password, file.path)
         contract = Contracts_Dragon721_sol_Dragon721.load(
-            contractAddress,
+            Url.contractAddress,
             web3,
             credentials,
             RealtimeGasProvider(),
@@ -196,26 +136,28 @@ class Ether {
         return contract
     }
 
-    fun loadContract(): Contract {
-        val credentials = Credentials.create(
-            //"3e7493befe4da8167bf95833109a525358c11f70a8ed9a04239a385a498114a8"
-            "ef1162540ed5189c7f7eb5c9bf274767e95aad0559b3920eb3dc50c35aecd465")
-        contract = Contracts_Dragon721_sol_Dragon721.load(
+ */
+
+    override fun loadContract(
+        contractAddress: String,
+        privateKey: String,
+    ) {
+        val credentials = Credentials.create(privateKey)
+        val gasProvider = RealtimeGasProvider()
+
+        dragon721Contract = Contracts_Dragon721_sol_Dragon721.load(
             contractAddress,
             web3,
             credentials,
-            RealtimeGasProvider(),
+            gasProvider,
         )
-        dragon721Contract = contract as Contracts_Dragon721_sol_Dragon721
-
-        return contract
     }
 
-    fun symbol(): String {
+    override fun getSymbol(): String {
         val sb = StringBuilder()
 
         runBlocking(Dispatchers.IO) {
-            dragon721Contract.symbol()
+            checkNotNull(dragon721Contract).symbol()
                 .flowable()
                 .subscribe({
                     sb.append(it)
@@ -227,11 +169,11 @@ class Ether {
         return sb.toString()
     }
 
-    fun tokenUri(tokenId: Long): String {
+    override fun getTokenUri(tokenId: Long): String {
         val sb = StringBuilder()
 
         runBlocking(Dispatchers.IO) {
-            dragon721Contract.tokenURI(BigInteger.valueOf(tokenId))
+            checkNotNull(dragon721Contract).tokenURI(BigInteger.valueOf(tokenId))
                 .flowable()
                 .subscribe({
                     sb.append(it)
@@ -243,11 +185,11 @@ class Ether {
         return sb.toString()
     }
 
-    fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
+    override fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
         val artworks = mutableListOf<Contracts_Dragon721_sol_Dragon721.Artwork>()
 
         runBlocking(Dispatchers.IO) {
-            dragon721Contract.allArtworks.flowable()
+            checkNotNull(dragon721Contract).allArtworks.flowable()
                 .subscribe({ list ->
                     list.forEach { item ->
                         item?.let {
@@ -264,11 +206,11 @@ class Ether {
         return artworks
     }
 
-    suspend fun downloadToken(
+    override suspend fun downloadToken(
         tokenId: BigInteger,
         callback: (String) -> Unit,
     ) = coroutineScope {
-        dragon721Contract.tokenURI(tokenId)
+        checkNotNull(dragon721Contract).tokenURI(tokenId)
             .flowable()
             .subscribe({ tokenUri ->
                 val metadata = "$tokenUri/metadata.json"

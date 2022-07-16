@@ -1,6 +1,7 @@
 package com.example.geth
 
-import com.example.geth.http.Url
+import com.example.geth.data.EtherUrl
+import com.example.geth.service.blockchain.Web3Dragon721Service
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -20,9 +21,11 @@ class ExampleUnitTest {
         var filename = ""
 
         runBlocking {
-            Ether().run {
-                init(Url().infuraRopsten)
-                loadContract()
+            Web3Dragon721Service().run {
+                loadContract(
+                    contractAddress = EtherUrl.contractAddress,
+                    privateKey = "ef1162540ed5189c7f7eb5c9bf274767e95aad0559b3920eb3dc50c35aecd465",
+                )
 
                 launch(Dispatchers.IO) {
                     downloadToken(BigInteger.valueOf(1)) { pathname ->
@@ -44,9 +47,12 @@ class ExampleUnitTest {
 
     @Test
     fun allArtworks() {
-        Ether().run {
-            init(Url().infuraRopsten)
-            loadContract()
+        Web3Dragon721Service().run {
+            loadContract(
+                contractAddress = EtherUrl.contractAddress,
+                privateKey = "ef1162540ed5189c7f7eb5c9bf274767e95aad0559b3920eb3dc50c35aecd465",
+            )
+
             getAllArtworks().let {
                 it.forEach {
                     it.metadataURI

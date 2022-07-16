@@ -2,10 +2,10 @@ package com.example.geth
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.geth.data.account.EtherAccount
-import com.example.geth.data.account.FileAccountRepository
-import com.example.geth.data.account.add
-import com.example.geth.data.account.delete
+import com.example.geth.data.EtherAccount
+import com.example.geth.service.account.FileAccountRepository
+import com.example.geth.service.account.add
+import com.example.geth.service.account.delete
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
