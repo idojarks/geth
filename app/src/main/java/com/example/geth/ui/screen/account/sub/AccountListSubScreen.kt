@@ -3,10 +3,10 @@ package com.example.geth.ui.screen.account.sub
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +27,7 @@ import com.example.geth.service.account.InspectionModeAccountRepository
 import com.example.geth.service.blockchain.InspectionModeDragon721Service
 import com.example.geth.ui.screen.AccountSubScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountListSubScreen(
     mainNavController: NavController,
@@ -40,7 +41,20 @@ fun AccountListSubScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            SmallTopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack(navController.graph.startDestinationId, true)
+                            mainNavController.popBackStack()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Home,
+                            contentDescription = "home",
+                        )
+                    }
+                },
                 title = {
                     Text(
                         text = stringResource(id = AccountSubScreen.AccountList.resourceId),
@@ -53,22 +67,19 @@ fun AccountListSubScreen(
                             navController.navigate(AccountSubScreen.NewAccount.route)
                         },
                     ) {
-                        Icon(imageVector = Icons.Filled.AddCircle, contentDescription = "new account")
+                        Icon(
+                            imageVector = Icons.Filled.AddCircle,
+                            contentDescription = "new account",
+                        )
                     }
-                    // home
-                    IconButton(
-                        onClick = {
-                            navController.popBackStack(navController.graph.startDestinationId, true)
-                            mainNavController.popBackStack()
-                        },
-                    ) {
-                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-                    }
+
                 },
             )
         },
     ) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.padding(it),
+        ) {
             accounts.value?.forEachIndexed { _, etherAccount ->
                 item {
                     Account(
@@ -81,16 +92,14 @@ fun AccountListSubScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Account(
     account: EtherAccount,
     model: EtherViewModel,
 ) {
     val borderStroke = if (account.isDefault) {
-        BorderStroke(
-            width = 2.dp,
-            color = MaterialTheme.colors.primaryVariant,
-        )
+        BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primaryContainer)
     } else {
         null
     }
@@ -108,7 +117,6 @@ fun Account(
                 text = account.name,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colors.primary,
                 modifier = Modifier.padding(6.dp),
                 fontStyle = FontStyle.Italic,
             )
@@ -117,7 +125,6 @@ fun Account(
                 text = account.address,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.primary,
                 modifier = Modifier.padding(6.dp),
             )
             Spacer(modifier = Modifier.padding(4.dp))

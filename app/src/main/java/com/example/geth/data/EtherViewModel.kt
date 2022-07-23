@@ -31,10 +31,13 @@ class EtherViewModel(
     }
 
     fun loadDefaultAccount() {
-        defaultAccount.value = accountRepository.getAccounts()
+        val account = accountRepository.getAccounts()
             .find {
                 it.isDefault
             }
+            ?: return
+
+        defaultAccount.value = account
     }
 
     fun loadDefaultAccountInCoroutine() {

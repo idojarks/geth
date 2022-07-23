@@ -6,3 +6,4 @@ data class EtherAccount(
     val privateKey: String = "",
     val isDefault: Boolean = false,
 )
+

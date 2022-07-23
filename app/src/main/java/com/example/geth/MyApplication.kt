@@ -7,6 +7,7 @@ import com.example.geth.service.account.AccountRepository
 import com.example.geth.service.account.FileAccountRepository
 import com.example.geth.service.blockchain.Dragon721Service
 import com.example.geth.service.blockchain.Web3Dragon721Service
+import com.google.android.material.color.DynamicColors
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -28,6 +29,8 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        DynamicColors.applyToActivitiesIfAvailable(this)
 
         val modelModule = module {
             single<AccountRepository> {

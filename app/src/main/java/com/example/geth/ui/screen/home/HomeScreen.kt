@@ -1,7 +1,7 @@
 package com.example.geth.ui.screen.home
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -29,12 +30,14 @@ import com.example.geth.ui.screen.HomeSubScreen
 import com.example.geth.ui.screen.Screen
 import com.example.geth.ui.screen.home.sub.Dragon721TokensSubScreen
 import com.example.geth.ui.screen.home.sub.InfoScreen
+import com.example.geth.ui.theme.MyTypography
 
 private val items = listOf(
     HomeSubScreen.Dragon721Tokens,
     HomeSubScreen.Info,
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     mainNavController: NavHostController,
@@ -55,39 +58,67 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            SmallTopAppBar(
+                /*
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.inversePrimary,
+                ),
+
+                 */
                 title = {
-                    Text(text = stringResource(id = R.string.app_name))
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        //style = MyTypography.titleLarge,
+                        //color = MaterialTheme.colorScheme.inversePrimary,
+                    )
                 },
                 actions = {
                     // default account
                     defaultAccount.value?.let {
-                        Text(text = it.name)
+                        Text(
+                            text = it.name,
+                            style = MyTypography.titleSmall,
+                            //color = MaterialTheme.colorScheme.inversePrimary,
+                            textAlign = TextAlign.End,
+                        )
                     }
 
                     // account screen
-                    IconButton(onClick = {
-                        mainNavController.navigate(Screen.Account.route)
-                    }) {
-                        Icon(imageVector = Screen.Account.icon, contentDescription = Screen.Account.description)
+                    IconButton(
+                        onClick = {
+                            mainNavController.navigate(Screen.Account.route)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Screen.Account.icon,
+                            contentDescription = Screen.Account.description,
+                            //tint = MaterialTheme.colorScheme.inversePrimary,
+                        )
                     }
 
                     // settings screen
-                    IconButton(onClick = {
-                        mainNavController.navigate(Screen.Settings.route)
-                    }) {
-                        Icon(imageVector = Screen.Settings.icon, contentDescription = Screen.Settings.description)
+                    IconButton(
+                        onClick = {
+                            mainNavController.navigate(Screen.Settings.route)
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Screen.Settings.icon,
+                            contentDescription = Screen.Settings.description,
+                            //tint = MaterialTheme.colorScheme.inversePrimary,
+                        )
                     }
                 },
             )
         },
         bottomBar = {
-            BottomNavigation {
+            NavigationBar {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
                 items.forEach { subScreen ->
-                    BottomNavigationItem(
+                    NavigationBarItem(
                         icon = {
                             Icon(
                                 imageVector = subScreen.icon,
@@ -95,7 +126,10 @@ fun HomeScreen(
                             )
                         },
                         label = {
-                            Text(text = stringResource(id = subScreen.resourceId))
+                            Text(
+                                text = stringResource(id = subScreen.resourceId),
+                                style = MyTypography.titleMedium,
+                            )
                         },
                         selected = currentDestination?.hierarchy?.any {
                             it.route == subScreen.route
@@ -109,6 +143,7 @@ fun HomeScreen(
                                 restoreState = true
                             }
                         },
+                        alwaysShowLabel = false,
                     )
                 }
             }

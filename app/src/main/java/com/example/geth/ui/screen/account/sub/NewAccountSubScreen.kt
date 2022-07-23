@@ -2,10 +2,11 @@ package com.example.geth.ui.screen.account.sub
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,10 +22,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
 import com.example.geth.data.EtherAccount
+import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.service.account.InspectionModeAccountRepository
+import com.example.geth.service.blockchain.InspectionModeDragon721Service
 import com.example.geth.ui.screen.AccountSubScreen
 import com.example.geth.web3.Web3Utils
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewAccountSubScreen(
     navController: NavController,
@@ -70,21 +75,31 @@ fun NewAccountSubScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = {
-                Text(text = stringResource(id = AccountSubScreen.NewAccount.resourceId))
-            }, actions = {
-                // back
-                IconButton(
-                    onClick = {
-                        navController.popBackStack()
-                    },
-                ) {
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
-                }
-            })
+            SmallTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = AccountSubScreen.NewAccount.resourceId),
+                    )
+                },
+                navigationIcon = {
+                    // back
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "back",
+                        )
+                    }
+                },
+            )
         },
     ) {
-        Column(modifier = Modifier.padding(10.dp)) {
+        Column(
+            modifier = Modifier.padding(it),
+        ) {
             OutlinedTextField(
                 value = name,
                 onValueChange = {
@@ -220,9 +235,28 @@ fun NewAccountSubScreen(
 @Preview
 @Composable
 fun PreviewNewAccount() {
-    val navController = rememberNavController()
-    NewAccountSubScreen(
-        navController = navController,
+    val model = EtherViewModel(
+        accountRepository = InspectionModeAccountRepository(
+            mutableListOf(
+                EtherAccount(
+                    name = "john",
+                    address = "0x000000",
+                    privateKey = "0x11111",
+                    isDefault = true,
+                ),
+            ),
+        ),
+        dragon721Service = InspectionModeDragon721Service(),
     )
+
+    CompositionLocalProvider(
+        LocalEtherViewModelProvider provides model,
+    ) {
+        val navController = rememberNavController()
+
+        NewAccountSubScreen(
+            navController = navController,
+        )
+    }
 }
 

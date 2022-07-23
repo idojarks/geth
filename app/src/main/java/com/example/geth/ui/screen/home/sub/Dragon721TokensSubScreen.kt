@@ -1,13 +1,12 @@
 package com.example.geth.ui.screen.home.sub
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -15,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.googlefonts.isAvailableOnDevice
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,8 +30,6 @@ import com.example.geth.service.account.InspectionModeAccountRepository
 import com.example.geth.service.blockchain.Dragon721Service
 import com.example.geth.service.blockchain.InspectionModeDragon721Service
 import com.example.geth.service.http.HttpClient
-import com.example.geth.ui.theme.MontserratFontFamily
-import com.example.geth.ui.theme.provider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -44,7 +40,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-@OptIn(ExperimentalCoroutinesApi::class, ExperimentalTextApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalTextApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Dragon721TokensSubScreen(
     defaultAccount: EtherAccount,
@@ -55,15 +51,12 @@ fun Dragon721TokensSubScreen(
     val model = LocalEtherViewModelProvider.current
     val scope = rememberCoroutineScope()
     val tokenUrlList = model.tokenUrlList.observeAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        if (provider.isAvailableOnDevice(context)) {
-            Log.d("eth", "font provider is available.")
-        }
-    }
 
     LaunchedEffect(key1 = defaultAccount) {
+        if (defaultAccount.name.isBlank()) {
+            return@LaunchedEffect
+        }
+
         model.dragon721Service.loadContract(
             contractAddress = EtherUrl.contractAddress,
             privateKey = defaultAccount.privateKey,
@@ -93,7 +86,6 @@ fun Dragon721TokensSubScreen(
                 .padding(8.dp)
                 .fillMaxWidth(),
             //textAlign = TextAlign.End,
-            fontFamily = MontserratFontFamily,
         )
         Spacer(modifier = Modifier.padding(8.dp))
 
@@ -144,7 +136,7 @@ fun Dragon721TokensSubScreen(
                                         .padding(4.dp)
                                         .fillMaxHeight()
                                         .fillMaxWidth(),
-                                    //fontSize = 40.sp,
+                                    fontSize = 40.sp,
                                     //fontWeight = FontWeight.Bold,
                                 )
                                 Row {
