@@ -1,10 +1,10 @@
-package com.example.geth.ui.screen.account.sub
+package com.example.geth.ui.screen.home.route.account.route
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -19,7 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.geth.R
 import com.example.geth.data.EtherAccount
 import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
@@ -29,57 +30,42 @@ import com.example.geth.ui.screen.AccountSubScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountListSubScreen(
-    mainNavController: NavController,
-    navController: NavController,
+fun AllAccountsScreen(
+    navController: NavHostController,
 ) {
     val model = LocalEtherViewModelProvider.current
     val accounts = model.accounts.observeAsState()
+
     remember {
         model.loadAccounts()
     }
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.popBackStack(navController.graph.startDestinationId, true)
-                            mainNavController.popBackStack()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "home",
-                        )
-                    }
+            SmallTopAppBar(navigationIcon = {
+                IconButton(
+                    onClick = {
+                        model.openAccountScreen.value = false
+                    },
+                ) {
+                    Icon(imageVector = Icons.Filled.Home, contentDescription = "home")
+                }
+            }, title = {
+                Text(text = stringResource(id = R.string.nav_all_accounts))
+            })
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(AccountSubScreen.New.route)
                 },
-                title = {
-                    Text(
-                        text = stringResource(id = AccountSubScreen.AccountList.resourceId),
-                    )
-                },
-                actions = {
-                    // new account
-                    IconButton(
-                        onClick = {
-                            navController.navigate(AccountSubScreen.NewAccount.route)
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = "new account",
-                        )
-                    }
-
-                },
-            )
+                modifier = Modifier.offset(),
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "new")
+            }
         },
     ) {
-        LazyColumn(
-            modifier = Modifier.padding(it),
-        ) {
+        LazyColumn(modifier = Modifier.padding(it)) {
             accounts.value?.forEachIndexed { _, etherAccount ->
                 item {
                     Account(
@@ -154,14 +140,19 @@ fun Account(
 
 @Preview
 @Composable
-fun PreviewAccountList() {
-    val model = EtherViewModel(accountRepository = InspectionModeAccountRepository(mutableListOf(
-        EtherAccount(
-            name = "john",
-            address = "0x000000",
-            privateKey = "0x11111",
+fun PreviewAllAccountsScreen() {
+    val model = EtherViewModel(
+        accountRepository = InspectionModeAccountRepository(
+            mutableListOf(
+                EtherAccount(
+                    name = "john",
+                    address = "0x000000",
+                    privateKey = "0x11111",
+                ),
+            ),
         ),
-    )), dragon721Service = InspectionModeDragon721Service())
+        dragon721Service = InspectionModeDragon721Service(),
+    )
 
     Account(
         account = EtherAccount(
@@ -172,15 +163,4 @@ fun PreviewAccountList() {
         ),
         model = model,
     )
-    /*
-    CompositionLocalProvider(
-        LocalEtherViewModelProvider provides model,
-    ) {
-        AccountListSubScreen(
-            mainNavController = rememberNavController(),
-            navController = rememberNavController(),
-        )
-    }
-
-     */
 }

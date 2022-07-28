@@ -1,4 +1,4 @@
-package com.example.geth.ui.screen.account.sub
+package com.example.geth.ui.screen.home.route.account.sub
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,7 +31,7 @@ import com.example.geth.web3.Web3Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewAccountSubScreen(
+fun NewAccountScreen(
     navController: NavController,
 ) {
     val model = LocalEtherViewModelProvider.current
@@ -78,7 +78,7 @@ fun NewAccountSubScreen(
             SmallTopAppBar(
                 title = {
                     Text(
-                        text = stringResource(id = AccountSubScreen.NewAccount.resourceId),
+                        text = stringResource(id = AccountSubScreen.New.resourceId),
                     )
                 },
                 navigationIcon = {
@@ -254,7 +254,7 @@ fun PreviewNewAccount() {
     ) {
         val navController = rememberNavController()
 
-        NewAccountSubScreen(
+        NewAccountScreen(
             navController = navController,
         )
     }

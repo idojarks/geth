@@ -1,18 +1,24 @@
 package com.example.geth.ui.screen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.geth.ui.screen.account.AccountScreen
+import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.ui.screen.home.HomeScreen
-import com.example.geth.ui.screen.settings.SettingsScreen
+import com.example.geth.ui.screen.home.route.account.sub.AccountScreen
 
 @Composable
 fun MainView() {
-    val navController = rememberNavController()
+    val model = LocalEtherViewModelProvider.current
+    val openAccountScreen = model.openAccountScreen.observeAsState(false)
 
+    if (openAccountScreen.value) {
+        AccountScreen()
+    } else {
+        HomeScreen()
+    }
+
+/*
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
@@ -23,12 +29,14 @@ fun MainView() {
             )
         }
         composable(route = Screen.Account.route) {
-            AccountScreen(mainNavController = navController)
+            AccountScreen()
         }
         composable(route = Screen.Settings.route) {
-            SettingsScreen(navController = navController)
+            SettingsScreen()
         }
     }
+
+ */
 }
 
 @Preview

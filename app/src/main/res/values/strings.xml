@@ -4,8 +4,8 @@
     <string name="nav_info">Info</string>
     <string name="nav_account">Account</string>
     <string name="nav_settings">Settings</string>
-    <string name="nav_accountList">Accounts</string>
+    <string name="nav_all_accounts">Accounts</string>
     <string name="nav_newAccount">New Account</string>
-    <string name="nav_dragon721Tokens">Dragon721Tokens</string>
+    <string name="nav_dragon721Tokens">Tokens</string>
     <string name="nav_registerAccount">Register</string>
 </resources>

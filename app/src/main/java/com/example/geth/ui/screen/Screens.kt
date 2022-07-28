@@ -2,8 +2,14 @@ package com.example.geth.ui.screen
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import com.example.geth.R
 
 sealed class Screen(
@@ -20,19 +26,36 @@ sealed class Screen(
 sealed class HomeSubScreen(
     val route: String,
     @StringRes val resourceId: Int,
-    val icon: ImageVector,
     val description: String,
 ) {
-    object Info : HomeSubScreen("info", R.string.nav_info, Icons.Filled.Info, "info")
-    object Dragon721Tokens : HomeSubScreen("dragon721Tokens", R.string.nav_dragon721Tokens, Icons.Filled.List, "tokens")
+    @Composable
+    abstract fun getFilledIcon(): ImageVector
+
+    @Composable
+    abstract fun getOutlinedIcon(): ImageVector
+
+    object Dragon721Info : HomeSubScreen("dragon721Info", R.string.nav_info, "info") {
+        @Composable
+        override fun getFilledIcon() = Icons.Filled.Info
+
+        @Composable
+        override fun getOutlinedIcon() = Icons.Outlined.Info
+    }
+
+    object Dragon721Tokens : HomeSubScreen("dragon721Tokens", R.string.nav_dragon721Tokens, "tokens") {
+        @Composable
+        override fun getFilledIcon() = ImageVector.vectorResource(id = R.drawable.ic_list_alt_fill1_wght400_grad0_opsz24)
+
+        @Composable
+        override fun getOutlinedIcon() = ImageVector.vectorResource(id = R.drawable.ic_list_alt_fill0_wght400_grad0_opsz24)
+    }
 }
 
 sealed class AccountSubScreen(
     val route: String,
     @StringRes val resourceId: Int,
-    val icon: ImageVector,
     val description: String,
 ) {
-    object AccountList : AccountSubScreen("accountList", R.string.nav_accountList, Icons.Filled.List, "accounts")
-    object NewAccount : AccountSubScreen("newAccount", R.string.nav_newAccount, Icons.Filled.Face, "new account")
+    object All : AccountSubScreen(route = "all", R.string.nav_all_accounts, "all")
+    object New : AccountSubScreen("new", R.string.nav_newAccount, "new")
 }
