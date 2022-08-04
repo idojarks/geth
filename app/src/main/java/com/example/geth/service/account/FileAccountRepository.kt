@@ -11,7 +11,7 @@ class FileAccountRepository(
     private val context: Context,
     private val filename: String,
 ) : AccountRepository {
-    private val accounts = mutableListOf<EtherAccount>()
+    private var accounts = listOf<EtherAccount>()
 
     override fun getAccounts(): List<EtherAccount> {
         loadIfAccountsEmpty()
@@ -30,7 +30,22 @@ class FileAccountRepository(
             return accounts
         }
 
-        accounts.add(account)
+        val list = mutableListOf<EtherAccount>()
+
+        if (account.isDefault) {
+            list.add(account)
+            list.addAll(accounts.map {
+                it.isDefault = false
+                it
+            })
+        } else {
+            list.addAll(accounts)
+            list.add(account)
+        }
+
+        accounts = list.sortedByDescending {
+            it.isDefault
+        }
         updateAccountsToFile()
 
         return accounts
@@ -38,7 +53,39 @@ class FileAccountRepository(
 
     override fun deleteAccount(account: EtherAccount): List<EtherAccount> {
         account.validateBeforeUse()
-        accounts.remove(account)
+
+        val list = accounts.filter {
+            it != account
+        }
+
+        if (list.isNotEmpty() && account.isDefault) {
+            list.first()
+                .apply {
+                    isDefault = true
+                }
+        }
+
+        accounts = list
+        updateAccountsToFile()
+
+        return accounts
+    }
+
+    override fun setDefaultAccount(account: EtherAccount): List<EtherAccount> {
+        if (account.isDefault) {
+            return accounts
+        }
+
+        account.validateBeforeUse()
+
+        accounts = accounts.map {
+                it.isDefault = it == account
+                it
+            }
+            .sortedByDescending {
+                it.isDefault
+            }
+
         updateAccountsToFile()
 
         return accounts
@@ -65,12 +112,18 @@ class FileAccountRepository(
                 }
             }
 
+        if (sb.isEmpty()) {
+            return
+        }
+
         val json = JSONObject(sb.toString())
         val array = json.getJSONArray("accounts")
 
         if (array.length() == 0) {
             return
         }
+
+        val list = mutableListOf<EtherAccount>()
 
         for (i in 0 until array.length()) {
             val account = array.getJSONObject(i)
@@ -85,9 +138,11 @@ class FileAccountRepository(
                     .toString()
                     .toBoolean(),
             ).also {
-                accounts.add(it)
+                list.add(it)
             }
         }
+
+        accounts = list
     }
 
     private fun updateAccountsToFile() {

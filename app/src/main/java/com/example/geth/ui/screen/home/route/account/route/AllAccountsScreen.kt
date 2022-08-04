@@ -1,31 +1,24 @@
 package com.example.geth.ui.screen.home.route.account.route
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
 import com.example.geth.data.EtherAccount
 import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
-import com.example.geth.service.account.InspectionModeAccountRepository
-import com.example.geth.service.blockchain.InspectionModeDragon721Service
+import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.AccountSubScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,17 +35,20 @@ fun AllAccountsScreen(
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(navigationIcon = {
-                IconButton(
-                    onClick = {
-                        model.openAccountScreen.value = false
-                    },
-                ) {
-                    Icon(imageVector = Icons.Filled.Home, contentDescription = "home")
-                }
-            }, title = {
-                Text(text = stringResource(id = R.string.nav_all_accounts))
-            })
+            SmallTopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            model.openAccountScreen.value = false
+                        },
+                    ) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                    }
+                },
+                title = {
+                    Text(text = stringResource(id = R.string.nav_all_accounts))
+                },
+            )
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -84,55 +80,99 @@ fun Account(
     account: EtherAccount,
     model: EtherViewModel,
 ) {
+    /*
     val borderStroke = if (account.isDefault) {
         BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primaryContainer)
     } else {
         null
     }
 
+     */
+
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp),
-        border = borderStroke,
+        //border = borderStroke,
     ) {
         Column(
-            modifier = Modifier.padding(6.dp),
+            modifier = Modifier.padding(12.dp),
         ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(text = account.name, style = MaterialTheme.typography.headlineMedium)
+
+                if (account.isDefault) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "default",
+                    )
+                }
+            }
+            Divider(modifier = Modifier.padding(top = 6.dp, bottom = 6.dp))
             Text(
-                text = account.name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(6.dp),
-                fontStyle = FontStyle.Italic,
+                text = "Address",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.tertiary,
+            )
+            Text(
+                text = account.address,
+                style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
-                text = account.address,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(6.dp),
+                text = "Balance",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.tertiary,
+            )
+            Text(
+                text = model.dragon721Service.getBalance(account.address),
+                style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Row(
-                modifier = Modifier.padding(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
             ) {
-                val (balance, setBalance) = remember {
-                    mutableStateOf("")
+                var expanded by remember {
+                    mutableStateOf(false)
                 }
 
-                Button(
-                    onClick = {
-                        setBalance(model.dragon721Service.getBalance(account.address))
-                    },
-                ) {
-                    Text(text = "Balance")
+                if (!account.isDefault) {
+                    Button(
+                        onClick = { /*TODO*/ },
+                    ) {
+                        Icon(imageVector = Icons.Filled.Star, contentDescription = "default")
+                        Text(text = "Set default", softWrap = false, modifier = Modifier.padding(horizontal = 2.dp))
+                    }
                 }
-                Spacer(modifier = Modifier.padding(10.dp))
-                Text(
-                    text = balance,
-                )
+
+                Box(modifier = Modifier.wrapContentSize(Alignment.CenterEnd)) {
+                    IconButton(
+                        onClick = {
+                            expanded = true
+                        },
+                    ) {
+                        Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "overflow menu")
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                    ) {
+                        DropdownMenuItem(text = { Text("Edit") }, onClick = { /*TODO*/ }, leadingIcon = {
+                            Icon(imageVector = Icons.Filled.Edit, contentDescription = "edit")
+                        })
+                        DropdownMenuItem(text = { Text("Delete") }, onClick = { /*TODO*/ }, leadingIcon = {
+                            Icon(imageVector = Icons.Filled.Delete, contentDescription = "delete")
+                        })
+                    }
+                }
+
             }
         }
     }
@@ -141,6 +181,12 @@ fun Account(
 @Preview
 @Composable
 fun PreviewAllAccountsScreen() {
+    CompositionLocalProvider(
+        LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+    ) {
+        AllAccountsScreen(rememberNavController())
+    }
+    /*
     val model = EtherViewModel(
         accountRepository = InspectionModeAccountRepository(
             mutableListOf(
@@ -154,13 +200,18 @@ fun PreviewAllAccountsScreen() {
         dragon721Service = InspectionModeDragon721Service(),
     )
 
+    AllAccountsScreen(rememberNavController())
+     */
+/*
     Account(
         account = EtherAccount(
             name = "john",
-            address = "adfa",
-            privateKey = "dsfsd",
-            isDefault = false,
+            address = "0x12",
+            privateKey = "yong",
+            isDefault = true,
         ),
         model = model,
     )
+
+ */
 }

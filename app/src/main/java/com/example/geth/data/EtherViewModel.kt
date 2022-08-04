@@ -21,14 +21,14 @@ class EtherViewModel(
     val accountRepository: AccountRepository,
     val dragon721Service: Dragon721Service,
 ) : ViewModel() {
-    val accounts = MutableLiveData<List<EtherAccount>>()
+    val accounts = MutableLiveData<List<EtherAccount>>(emptyList())
     val defaultAccount = MutableLiveData<EtherAccount>()
     val isChangeDefaultAccount = MutableLiveData(false)
     val tokenSymbol = MutableLiveData("")
     val tokenUrlList = MutableLiveData(mutableListOf<String>())
     val openAccountScreen = MutableLiveData(false)
     val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
-    val symbol = MutableLiveData("")
+    //val symbol = MutableLiveData("")
 
     fun loadAccounts(): List<EtherAccount> {
         val list = accountRepository.getAccounts()
@@ -54,6 +54,10 @@ class EtherViewModel(
         defaultAccount.value = account
     }
 
+    fun setDefaultAccount(account: EtherAccount) {
+        accounts.value = accountRepository.setDefaultAccount(account)
+    }
+
     fun loadContract() {
         val account = checkNotNull(defaultAccount.value)
 
@@ -63,7 +67,7 @@ class EtherViewModel(
         )
 
         artworks.value = dragon721Service.getAllArtworks()
-        symbol.value = dragon721Service.getSymbol()
+        //symbol.value = dragon721Service.getSymbol()
     }
 
     fun loadDefaultAccountInCoroutine() {
