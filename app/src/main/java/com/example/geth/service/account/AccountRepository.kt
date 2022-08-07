@@ -6,7 +6,8 @@ interface AccountRepository {
     fun getAccounts(): List<EtherAccount>
     fun addAccount(account: EtherAccount): List<EtherAccount>
     fun deleteAccount(account: EtherAccount): List<EtherAccount>
-    fun setDefaultAccount(account: EtherAccount): List<EtherAccount>
+    fun editAccount(srcAccount: EtherAccount, dstAccount: EtherAccount): List<EtherAccount>
+    fun setDefaultAccount(account: EtherAccount)
 }
 
 infix fun AccountRepository.add(account: EtherAccount): List<EtherAccount> {

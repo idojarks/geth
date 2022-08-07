@@ -5,6 +5,6 @@ import org.web3j.crypto.WalletUtils
 class Web3Utils {
     companion object {
         fun isAddress(address: String) = WalletUtils.isValidAddress(address)
-        fun isPk(pk: String) = WalletUtils.isValidPrivateKey(pk)
+        fun isPrivateKey(pk: String) = WalletUtils.isValidPrivateKey(pk)
     }
 }

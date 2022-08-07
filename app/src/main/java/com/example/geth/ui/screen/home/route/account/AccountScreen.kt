@@ -1,15 +1,19 @@
-package com.example.geth.ui.screen.home.route.account.sub
+package com.example.geth.ui.screen.home.route.account
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.ui.screen.AccountSubScreen
+import com.example.geth.ui.screen.home.route.account.route.AccountDetailScreen
 import com.example.geth.ui.screen.home.route.account.route.AllAccountsScreen
 
 @Composable
 fun AccountScreen() {
     val navController = rememberNavController()
+    val model = LocalEtherViewModelProvider.current
 
     NavHost(
         navController = navController,
@@ -20,9 +24,24 @@ fun AccountScreen() {
             AllAccountsScreen(navController = navController)
         }
 
-        // new
-        composable(route = AccountSubScreen.New.route) {
-            NewAccountScreen(navController = navController)
+        // new or edit
+        composable(
+            route = "account?address={address}",
+            arguments = listOf(
+                navArgument("address") {
+                    nullable = true
+                },
+            ),
+        ) {
+            val account = it.arguments?.getString("address")
+                ?.let { address ->
+                    model.getAccount(address)
+                }
+
+            AccountDetailScreen(
+                navController = navController,
+                account = account,
+            )
         }
     }
 }

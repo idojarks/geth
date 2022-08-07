@@ -1,4 +1,4 @@
-package com.example.geth.ui.screen.home.route.account.sub
+package com.example.geth.ui.screen.home.route.account.route
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,7 +17,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
@@ -26,19 +25,20 @@ import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.service.account.InspectionModeAccountRepository
 import com.example.geth.service.blockchain.InspectionModeDragon721Service
-import com.example.geth.ui.screen.AccountSubScreen
 import com.example.geth.web3.Web3Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewAccountScreen(
+fun AccountDetailScreen(
     navController: NavController,
+    account: EtherAccount? = null,
 ) {
     val model = LocalEtherViewModelProvider.current
 
     // name
     val (name, setName) = remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(account?.name
+            ?: ""))
     }
     val (nameError, setNameError) = remember {
         mutableStateOf(false)
@@ -49,7 +49,8 @@ fun NewAccountScreen(
 
     // address
     val (address, setAddress) = remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(account?.address
+            ?: ""))
     }
     val (addressError, setAddressError) = remember {
         mutableStateOf(false)
@@ -60,7 +61,8 @@ fun NewAccountScreen(
 
     // private key
     val (pk, setPk) = remember {
-        mutableStateOf(TextFieldValue(""))
+        mutableStateOf(TextFieldValue(account?.privateKey
+            ?: ""))
     }
     val (pkError, setPkError) = remember {
         mutableStateOf(false)
@@ -70,7 +72,8 @@ fun NewAccountScreen(
     }
 
     val (defaultAccount, setDefaultAccount) = remember {
-        mutableStateOf(false)
+        mutableStateOf(account?.isDefault
+            ?: false)
     }
 
     Scaffold(
@@ -78,7 +81,7 @@ fun NewAccountScreen(
             SmallTopAppBar(
                 title = {
                     Text(
-                        text = stringResource(id = AccountSubScreen.New.resourceId),
+                        text = stringResource(id = if (account != null) R.string.editAccount else R.string.newAccount),
                     )
                 },
                 navigationIcon = {
@@ -176,12 +179,20 @@ fun NewAccountScreen(
                 color = Color.Red,
             )
             Row {
-                Checkbox(checked = defaultAccount, onCheckedChange = {
-                    setDefaultAccount(it)
-                }, modifier = Modifier.align(Alignment.CenterVertically))
-                Text(text = "default account", modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.CenterVertically), fontSize = 16.sp)
+                Checkbox(
+                    checked = defaultAccount,
+                    onCheckedChange = { checked ->
+                        setDefaultAccount(checked)
+                    },
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                )
+                Text(
+                    text = "default account",
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.CenterVertically),
+                    //fontSize = 16.sp,
+                )
             }
             // register
             Button(
@@ -210,15 +221,29 @@ fun NewAccountScreen(
                         return@Button
                     }
 
-                    if (!Web3Utils.isPk(pk = pk.text)) {
+                    if (!Web3Utils.isPrivateKey(pk = pk.text)) {
                         setPkError(true)
                         setPkErrorText("invalid private key")
                         return@Button
                     }
 
-                    model.addAccount {
-                        EtherAccount(name = name.text, address = address.text, privateKey = pk.text, isDefault = defaultAccount)
+                    val newAccount = EtherAccount(
+                        name = name.text,
+                        address = address.text,
+                        privateKey = pk.text,
+                        isDefault = defaultAccount,
+                    )
+
+                    if (account == null) {
+                        model.addAccount(newAccount)
                     }
+                    else {
+                        model.editAccount(
+                            srcAccount = account,
+                            dstAccount = newAccount,
+                        )
+                    }
+
                     navController.popBackStack()
                 },
                 modifier = Modifier
@@ -226,7 +251,7 @@ fun NewAccountScreen(
                     .align(Alignment.CenterHorizontally)
                     .padding(8.dp),
             ) {
-                Text(text = stringResource(id = R.string.nav_registerAccount))
+                Text(text = stringResource(id = if (account == null) R.string.registerAccount else R.string.updateAccount))
             }
         }
     }
@@ -254,7 +279,7 @@ fun PreviewNewAccount() {
     ) {
         val navController = rememberNavController()
 
-        NewAccountScreen(
+        AccountDetailScreen(
             navController = navController,
         )
     }

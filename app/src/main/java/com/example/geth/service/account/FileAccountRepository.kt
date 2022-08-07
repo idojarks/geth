@@ -23,22 +23,25 @@ class FileAccountRepository(
         account.validateBeforeUse()
         loadIfAccountsEmpty()
 
-        if (accounts.contains(account)) {
-            Toast.makeText(context, "account exists", Toast.LENGTH_SHORT)
-                .show()
-
-            return accounts
+        accounts.find {
+            it.address == account.address
         }
+            ?.let {
+                Toast.makeText(context, "account exists", Toast.LENGTH_SHORT)
+                    .show()
+
+                return accounts
+            }
 
         val list = mutableListOf<EtherAccount>()
 
         if (account.isDefault) {
             list.add(account)
             list.addAll(accounts.map {
-                it.isDefault = false
-                it
+                if (it.isDefault) EtherAccount(it.name, it.address, it.privateKey, false) else it
             })
-        } else {
+        }
+        else {
             list.addAll(accounts)
             list.add(account)
         }
@@ -58,37 +61,56 @@ class FileAccountRepository(
             it != account
         }
 
-        if (list.isNotEmpty() && account.isDefault) {
-            list.first()
-                .apply {
-                    isDefault = true
-                }
-        }
-
         accounts = list
         updateAccountsToFile()
 
         return accounts
     }
 
-    override fun setDefaultAccount(account: EtherAccount): List<EtherAccount> {
+    override fun editAccount(
+        srcAccount: EtherAccount,
+        dstAccount: EtherAccount,
+    ): List<EtherAccount> {
+        srcAccount.validateBeforeUse()
+        dstAccount.validateBeforeUse()
+
+        accounts = accounts.map {
+            if (it == srcAccount) {
+                dstAccount
+            }
+            else {
+                it
+            }
+        }
+
+        updateAccountsToFile()
+
+        return accounts
+    }
+
+    override fun setDefaultAccount(account: EtherAccount) {
         if (account.isDefault) {
-            return accounts
+            return
         }
 
         account.validateBeforeUse()
 
         accounts = accounts.map {
-                it.isDefault = it == account
+            if (it.isDefault) {
+                EtherAccount(it.name, it.address, it.privateKey, false)
+            }
+            else if (it == account) {
+                EtherAccount(it.name, it.address, it.privateKey, true)
+            }
+            else {
                 it
             }
+        }
             .sortedByDescending {
                 it.isDefault
             }
 
         updateAccountsToFile()
-
-        return accounts
     }
 
     private fun loadIfAccountsEmpty() {
@@ -177,9 +199,11 @@ class FileAccountRepository(
 fun EtherAccount.validateBeforeUse() {
     if (name.isEmpty()) {
         throw IllegalArgumentException("invalid account: empty Name")
-    } else if (address.isEmpty()) {
+    }
+    else if (address.isEmpty()) {
         throw IllegalArgumentException("invalid account: empty Address")
-    } else if (privateKey.isEmpty()) {
+    }
+    else if (privateKey.isEmpty()) {
         throw IllegalArgumentException("invalid account: empty PrivateKey")
     }
 }

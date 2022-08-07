@@ -10,6 +10,7 @@ import com.example.geth.service.account.AccountRepository
 import com.example.geth.service.account.InspectionModeAccountRepository
 import com.example.geth.service.blockchain.Dragon721Service
 import com.example.geth.service.blockchain.InspectionModeDragon721Service
+import kotlinx.coroutines.coroutineScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.compose.getViewModel
@@ -21,41 +22,58 @@ class EtherViewModel(
     val accountRepository: AccountRepository,
     val dragon721Service: Dragon721Service,
 ) : ViewModel() {
-    val accounts = MutableLiveData<List<EtherAccount>>(emptyList())
+    val accounts = MutableLiveData<List<EtherAccount>>()
     val defaultAccount = MutableLiveData<EtherAccount>()
-    val isChangeDefaultAccount = MutableLiveData(false)
-    val tokenSymbol = MutableLiveData("")
     val tokenUrlList = MutableLiveData(mutableListOf<String>())
     val openAccountScreen = MutableLiveData(false)
     val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
-    //val symbol = MutableLiveData("")
+    val reloadAccounts = MutableLiveData(true)
 
-    fun loadAccounts(): List<EtherAccount> {
+    suspend fun loadAccounts() = coroutineScope {
         val list = accountRepository.getAccounts()
-        accounts.value = list
-        return list
+        accounts.postValue(list)
+        reloadAccounts.postValue(false)
     }
 
-    fun addAccount(block: () -> EtherAccount) {
-        accounts.value = accountRepository.addAccount(block())
+    fun addAccount(account: EtherAccount) {
+        accounts.value = accountRepository.addAccount(account)
+        loadDefaultAccount()
     }
 
     fun deleteAccount(account: EtherAccount) {
-        accounts.value = accountRepository.deleteAccount(account)
+        accountRepository.deleteAccount(account)
+        loadDefaultAccount()
+
+        reloadAccounts.value = true
     }
 
-    fun loadDefaultAccount() {
-        val account = accountRepository.getAccounts()
-            .find {
-                it.isDefault
-            }
-            ?: return
+    fun editAccount(
+        srcAccount: EtherAccount,
+        dstAccount: EtherAccount,
+    ) {
+        accounts.value = accountRepository.editAccount(srcAccount, dstAccount)
+        loadDefaultAccount()
+    }
 
-        defaultAccount.value = account
+    fun getAccount(address: String): EtherAccount? {
+        return accountRepository.getAccounts()
+            .find {
+                it.address == address
+            }
     }
 
     fun setDefaultAccount(account: EtherAccount) {
-        accounts.value = accountRepository.setDefaultAccount(account)
+        accountRepository.setDefaultAccount(account)
+        loadDefaultAccount()
+
+        reloadAccounts.value = true
+    }
+
+    fun loadDefaultAccount() {
+        defaultAccount.value = accountRepository.getAccounts()
+            .find {
+                it.isDefault
+            }
     }
 
     fun loadContract() {
@@ -125,6 +143,12 @@ fun getInspectionModeViewModel(): EtherViewModel {
                         address = "0x000000",
                         privateKey = "0x11111",
                         isDefault = true,
+                    ),
+                    EtherAccount(
+                        name = "yong",
+                        address = "0x000000",
+                        privateKey = "0x11111",
+                        isDefault = false,
                     ),
                 ),
             )

@@ -4,6 +4,7 @@ import com.example.geth.Contracts_Dragon721_sol_Dragon721
 import com.example.geth.RealtimeGasProvider
 import com.example.geth.data.EtherUrl
 import com.example.geth.service.http.HttpClient
+import com.example.geth.web3.Web3Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -73,6 +74,10 @@ class Web3Dragon721Service : Dragon721Service {
     }
 
     override fun getBalance(address: String): String {
+        if (!Web3Utils.isAddress(address)) {
+            return "-1"
+        }
+
         return runBlocking {
             val channel = Channel<String>()
 

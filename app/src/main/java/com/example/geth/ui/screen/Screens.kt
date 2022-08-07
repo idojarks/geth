@@ -57,5 +57,5 @@ sealed class AccountSubScreen(
     val description: String,
 ) {
     object All : AccountSubScreen(route = "all", R.string.nav_all_accounts, "all")
-    object New : AccountSubScreen("new", R.string.nav_newAccount, "new")
+    object New : AccountSubScreen("new", R.string.newAccount, "new")
 }

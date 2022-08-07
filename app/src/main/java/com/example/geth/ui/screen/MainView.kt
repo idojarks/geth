@@ -5,7 +5,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.ui.screen.home.HomeScreen
-import com.example.geth.ui.screen.home.route.account.sub.AccountScreen
+import com.example.geth.ui.screen.home.route.account.AccountScreen
 
 @Composable
 fun MainView() {

@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Dragon721TokensScreen(
-    defaultAccount: EtherAccount,
+    defaultAccount: EtherAccount?,
 ) {
     val model = LocalEtherViewModelProvider.current
     val scope = rememberCoroutineScope()
@@ -36,6 +36,10 @@ fun Dragon721TokensScreen(
     val artworks = model.artworks.observeAsState(emptyList())
 
     LaunchedEffect(key1 = defaultAccount) {
+        if (defaultAccount == null) {
+            return@LaunchedEffect
+        }
+
         if (defaultAccount.name.isBlank()) {
             return@LaunchedEffect
         }

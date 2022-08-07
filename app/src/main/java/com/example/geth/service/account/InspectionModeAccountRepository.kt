@@ -19,13 +19,10 @@ class InspectionModeAccountRepository(
         return accounts
     }
 
-    override fun setDefaultAccount(account: EtherAccount): List<EtherAccount> {
-        accounts.find {
-            it == account
-        }
-            ?.apply {
-                isDefault = true
-            }
+    override fun editAccount(srcAccount: EtherAccount, dstAccount: EtherAccount): List<EtherAccount> {
         return accounts
+    }
+
+    override fun setDefaultAccount(account: EtherAccount) {
     }
 }

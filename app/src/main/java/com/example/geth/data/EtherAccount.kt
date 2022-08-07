@@ -4,5 +4,5 @@ data class EtherAccount(
     val name: String = "",
     val address: String = "",
     val privateKey: String = "",
-    var isDefault: Boolean = false,
+    val isDefault: Boolean = false,
 )

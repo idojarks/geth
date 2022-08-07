@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
-import com.example.geth.data.EtherAccount
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.HomeSubScreen
@@ -36,7 +35,7 @@ fun HomeScreen() {
     val model = LocalEtherViewModelProvider.current
     val navController = rememberNavController()
 
-    val defaultAccount = model.defaultAccount.observeAsState(EtherAccount())
+    val defaultAccount = model.defaultAccount.observeAsState()
 
     model.loadDefaultAccount()
 
