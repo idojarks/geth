@@ -76,16 +76,17 @@ class EtherViewModel(
             }
     }
 
-    fun loadContract() {
-        val account = checkNotNull(defaultAccount.value)
-
+    fun loadContract(account: EtherAccount) {
         dragon721Service.loadContract(
             contractAddress = EtherUrl.contractAddress,
             privateKey = account.privateKey,
         )
 
-        artworks.value = dragon721Service.getAllArtworks()
-        //symbol.value = dragon721Service.getSymbol()
+        //artworks.value = dragon721Service.getAllArtworks()
+    }
+
+    fun loadArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
+        return dragon721Service.getAllArtworks()
     }
 
     fun loadDefaultAccountInCoroutine() {

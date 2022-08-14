@@ -73,7 +73,7 @@ fun AllAccountsScreen(
                             navController.navigate("account")
                         },
                     ) {
-                        Icon(imageVector = Icons.Filled.Add, contentDescription = "new")
+                        Icon(imageVector = Icons.Filled.Add, contentDescription = "add account")
                     }
                 },
             )
