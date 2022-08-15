@@ -8,6 +8,7 @@ data class ArtworkToken(
     val context: Contracts_Dragon721_sol_Dragon721.Artwork = Contracts_Dragon721_sol_Dragon721.Artwork("", "", ""),
 ) {
     open class LoadingTokenState {
+        object Start : LoadingTokenState() {}
         object Uri : LoadingTokenState() {}
         object ImageUri : LoadingTokenState() {}
         object Done : LoadingTokenState() {}

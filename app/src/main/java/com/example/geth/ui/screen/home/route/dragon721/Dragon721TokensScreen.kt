@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
@@ -30,49 +29,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-private fun getArtworkTokenList(
-    artworkToken: ArtworkToken,
-): State<SnapshotStateList<ArtworkToken>> {
-    val list = remember {
-        mutableStateListOf<ArtworkToken>()
-    }
-
-    return produceState(initialValue = list, artworkToken) {
-        if (artworkToken.imageUrl.isNotEmpty()) {
-            list.add(artworkToken)
-        }
-        value = list
-    }
-}
-
-sealed class LoadingState {
-    interface Message {
-        val loadingMessage: String
-    }
-
-    object Contract : Message {
-        override val loadingMessage: String = "Loading contract"
-    }
-
-    object Artworks : Message {
-        override val loadingMessage: String = "Loading artworks"
-    }
-
-    object Done : Message {
-        override val loadingMessage: String = ""
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun Dragon721TokensScreen(
     defaultAccount: EtherAccount?,
 ) {
     val model = LocalEtherViewModelProvider.current
     val scope = rememberCoroutineScope()
 
+    val showTokenDetail by mutableStateOf(false)
+
     val loadingStateFlow = remember {
-        MutableStateFlow<LoadingState.Message>(LoadingState.Contract)
+        MutableStateFlow("")
     }
     val loadingState by loadingStateFlow.collectAsState()
 
@@ -83,11 +49,11 @@ fun Dragon721TokensScreen(
 
     LaunchedEffect(key1 = defaultAccount) {
         defaultAccount?.let { account ->
-            loadingStateFlow.emit(LoadingState.Contract)
+            loadingStateFlow.emit("Loading contract")
             delay(1)
             model.loadContract(account)
 
-            loadingStateFlow.emit(LoadingState.Artworks)
+            loadingStateFlow.emit("Loading artworks")
             delay(1)
 
             model.loadArtworks()
@@ -116,7 +82,7 @@ fun Dragon721TokensScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 CircularProgressIndicator()
-                Text(text = loadingState.loadingMessage)
+                Text(text = loadingState)
             }
         }
 
@@ -162,6 +128,7 @@ fun Dragon721TokensScreen(
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ArtworkCard(
@@ -171,12 +138,32 @@ private fun ArtworkCard(
     val scope = rememberCoroutineScope()
 
     val loadingTokenStateFlow = remember {
-        MutableStateFlow<Pair<ArtworkToken.LoadingTokenState, String>>(Pair(ArtworkToken.LoadingTokenState.Uri, ""))
+        MutableStateFlow<Pair<ArtworkToken.LoadingTokenState, String>>(Pair(ArtworkToken.LoadingTokenState.Start, ""))
     }
     val loadingTokenState by loadingTokenStateFlow.collectAsState()
 
     Card(modifier = Modifier.fillMaxWidth()) {
         when (loadingTokenState.first) {
+            ArtworkToken.LoadingTokenState.Start -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = "Loading started",
+                        )
+                    }
+                }
+
+                scope.launch {
+                    loadingTokenStateFlow.emit(Pair(ArtworkToken.LoadingTokenState.Uri, ""))
+                }
+            }
             ArtworkToken.LoadingTokenState.Uri -> {
                 Box(
                     modifier = Modifier
