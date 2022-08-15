@@ -81,36 +81,30 @@ fun Dragon721TokensScreen(
     val artworkTokenList by artworkTokenListStateFlow.collectAsState()
 
     LaunchedEffect(key1 = defaultAccount) {
-        defaultAccount?.let {
+        defaultAccount?.let { account ->
             loadingStateFlow.emit(LoadingState.Contract)
-            model.loadContract(it)
+            model.loadContract(account)
 
             loadingStateFlow.emit(LoadingState.Artworks)
             model.loadArtworks()
                 .run {
-                    loadingStateFlow.emit(LoadingState.Done)
-
                     val list = mutableListOf<ArtworkToken>()
 
                     forEachIndexed { index, artwork ->
-                        launch(Dispatchers.IO) {
-                            val token = ArtworkToken()
-                            token.index = index
-                            token.context = artwork
+                        val token = ArtworkToken()
+                        token.index = index
+                        token.context = artwork
 
-                            list.add(token)
-                            list.sortBy { elem ->
-                                elem.index
-                            }
-
-                            artworkTokenListStateFlow.emit(list)
-                        }
+                        list.add(token)
                     }
+
+                    artworkTokenListStateFlow.emit(list)
+                    //loadingStateFlow.emit(LoadingState.Done)
                 }
         }
     }
 
-    if (loadingState == LoadingState.Contract || loadingState == LoadingState.Artworks) {
+    if (artworkTokenList.isEmpty()) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
