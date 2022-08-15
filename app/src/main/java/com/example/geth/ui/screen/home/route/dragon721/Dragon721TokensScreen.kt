@@ -25,6 +25,7 @@ import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.service.http.HttpClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -83,23 +84,23 @@ fun Dragon721TokensScreen(
     LaunchedEffect(key1 = defaultAccount) {
         defaultAccount?.let { account ->
             loadingStateFlow.emit(LoadingState.Contract)
+            delay(1)
             model.loadContract(account)
 
             loadingStateFlow.emit(LoadingState.Artworks)
+            delay(1)
+
             model.loadArtworks()
                 .run {
                     val list = mutableListOf<ArtworkToken>()
 
                     forEachIndexed { index, artwork ->
-                        val token = ArtworkToken()
-                        token.index = index
-                        token.context = artwork
-
-                        list.add(token)
+                        ArtworkToken(index = index, context = artwork).run {
+                            list.add(this)
+                        }
                     }
 
                     artworkTokenListStateFlow.emit(list)
-                    //loadingStateFlow.emit(LoadingState.Done)
                 }
         }
     }

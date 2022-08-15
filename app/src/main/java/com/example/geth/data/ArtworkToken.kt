@@ -3,9 +3,9 @@ package com.example.geth.data
 import com.example.geth.Contracts_Dragon721_sol_Dragon721
 
 data class ArtworkToken(
-    var index: Int = -1,
+    val index: Int = -1,
     var imageUrl: String = "",
-    var context: Contracts_Dragon721_sol_Dragon721.Artwork = Contracts_Dragon721_sol_Dragon721.Artwork("", "", ""),
+    val context: Contracts_Dragon721_sol_Dragon721.Artwork = Contracts_Dragon721_sol_Dragon721.Artwork("", "", ""),
 ) {
     open class LoadingTokenState {
         object Uri : LoadingTokenState() {}
