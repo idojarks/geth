@@ -21,7 +21,9 @@ fun AccountScreen() {
     ) {
         // all
         composable(route = AccountSubScreen.All.route) {
-            AllAccountsScreen(navController = navController)
+            AllAccountsScreen(
+                navController = navController,
+            )
         }
 
         // new or edit

@@ -14,12 +14,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
 import com.example.geth.data.EtherAccount
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
+import com.example.geth.ui.screen.RootNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -27,9 +28,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllAccountsScreen(
-    navController: NavHostController,
+    navController: NavController,
 ) {
     val model = LocalEtherViewModelProvider.current
+    val rootNavController = RootNavController.current
+
     val accounts = model.accounts.observeAsState()
     val reloadAccounts = model.reloadAccounts.observeAsState(true)
 
@@ -58,7 +61,8 @@ fun AllAccountsScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            model.openAccountScreen.value = false
+                            //model.openAccountScreen.value = false
+                            rootNavController.navigate("home")
                         },
                     ) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
@@ -255,9 +259,14 @@ fun AccountBalance(account: EtherAccount) {
 @Preview
 @Composable
 fun PreviewAllAccountsScreen() {
+    val rootNavController = rememberNavController()
+
     CompositionLocalProvider(
         LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        RootNavController provides rootNavController,
     ) {
-        AllAccountsScreen(rememberNavController())
+        AllAccountsScreen(
+            rememberNavController(),
+        )
     }
 }

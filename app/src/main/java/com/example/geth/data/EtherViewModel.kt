@@ -25,7 +25,7 @@ class EtherViewModel(
     val accounts = MutableLiveData<List<EtherAccount>>()
     val defaultAccount = MutableLiveData<EtherAccount>()
     val tokenUrlList = MutableLiveData(mutableListOf<String>())
-    val openAccountScreen = MutableLiveData(false)
+    //val openAccountScreen = MutableLiveData(false)
     val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
     val reloadAccounts = MutableLiveData(true)
 
@@ -102,31 +102,6 @@ class EtherViewModel(
                 defaultAccount.postValue(it)
             }
     }
-
-/*
-    fun loadContract(
-        contractAddress: String,
-        privateKey: String,
-    ): Contract {
-        return dragon721Service.loadContract(
-            contractAddress = contractAddress,
-            privateKey = privateKey,
-        )
-    }
-
-    fun getBalance(address: String): String {
-        return dragon721Service.getBalance(address = address)
-    }
-
-    fun getSymbol(): String {
-        return dragon721Service.getSymbol()
-    }
-
-    fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
-        return dragon721Service.getAllArtworks()
-    }
-
- */
 }
 
 val LocalEtherViewModelProvider = compositionLocalOf<EtherViewModel> {

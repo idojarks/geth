@@ -21,6 +21,7 @@ import com.example.geth.R
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.HomeSubScreen
+import com.example.geth.ui.screen.RootNavController
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721InfoScreen
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721TokensScreen
 
@@ -32,8 +33,9 @@ private val items = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    val model = LocalEtherViewModelProvider.current
     val navController = rememberNavController()
+    val model = LocalEtherViewModelProvider.current
+    val rootNavController = RootNavController.current
 
     val defaultAccount = model.defaultAccount.observeAsState()
 
@@ -55,7 +57,8 @@ fun HomeScreen() {
 
                     IconButton(
                         onClick = {
-                            model.openAccountScreen.value = true
+                            rootNavController.navigate("account")
+                            //model.openAccountScreen.value = true
                         },
                     ) {
                         Icon(
@@ -86,7 +89,6 @@ fun HomeScreen() {
                         label = {
                             Text(
                                 text = stringResource(id = subScreen.resourceId),
-                                //style = MyTypography.titleMedium,
                             )
                         },
                         selected = selected,
@@ -125,11 +127,12 @@ fun HomeScreen() {
 @Preview
 @Composable
 fun PreviewMainView() {
+    val navController = rememberNavController()
+
     CompositionLocalProvider(
         LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        RootNavController provides navController,
     ) {
-        HomeScreen(
-            //rememberNavController(),
-        )
+        HomeScreen()
     }
 }
