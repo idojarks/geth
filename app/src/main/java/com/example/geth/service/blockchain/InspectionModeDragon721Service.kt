@@ -375,6 +375,16 @@ class InspectionModeDragon721Service : Dragon721Service {
     override fun loadContract(contractAddress: String, privateKey: String) {}
     override fun getSymbol(): String = "Dragon721"
     override fun getTokenUri(tokenId: Long): String = "https://ipfs.io/ipfs/bafyreieptcrsawxiyqw75yc5mmgewmosneyohacc6mfzblivj3yiqrz3zq"
-    override fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> = emptyList()
+    override fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> = listOf(Contracts_Dragon721_sol_Dragon721.Artwork(
+        "title",
+        "artist",
+        "123",
+        "456",
+        "9090",
+        BigInteger.valueOf(10),
+        "desc",
+    ))
+
     override suspend fun downloadToken(tokenId: BigInteger, callback: (String) -> Unit) {}
+    override fun ownerOf(tokenId: Long): Result<String> = Result.success("0x123456789")
 }

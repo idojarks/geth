@@ -236,4 +236,11 @@ class Web3Dragon721Service : Dragon721Service {
             })
             .dispose()
     }
+
+    override fun ownerOf(tokenId: Long): Result<String> {
+        return runCatching {
+            checkNotNull(dragon721Contract).ownerOf(BigInteger.valueOf(tokenId))
+                .send()
+        }
+    }
 }

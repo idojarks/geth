@@ -24,10 +24,8 @@ class EtherViewModel(
 ) : ViewModel() {
     val accounts = MutableLiveData<List<EtherAccount>>()
     val defaultAccount = MutableLiveData<EtherAccount>()
-    val tokenUrlList = MutableLiveData(mutableListOf<String>())
-    //val openAccountScreen = MutableLiveData(false)
-    val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
     val reloadAccounts = MutableLiveData(true)
+    val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
 
     suspend fun loadAccounts() = coroutineScope {
         val list = accountRepository.getAccounts()
@@ -81,26 +79,22 @@ class EtherViewModel(
             contractAddress = EtherUrl.contractAddress,
             privateKey = account.privateKey,
         )
-
-        //artworks.value = dragon721Service.getAllArtworks()
     }
 
     fun loadArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
-        return dragon721Service.getAllArtworks()
+        val result = dragon721Service.getAllArtworks()
+        artworks.value = result
+        return result
     }
 
-    fun loadDefaultAccountInCoroutine() {
-        accountRepository.getAccounts()
-            .find {
-                if (it.isDefault) {
-                    println("default account loaded : $it")
-                }
+    fun getArtwork(index: Int): Result<Contracts_Dragon721_sol_Dragon721.Artwork?> {
+        if (artworks.value?.isEmpty() == true) {
+            loadArtworks()
+        }
 
-                it.isDefault
-            }
-            ?.let {
-                defaultAccount.postValue(it)
-            }
+        return kotlin.runCatching {
+            artworks.value?.elementAt(index)
+        }
     }
 }
 

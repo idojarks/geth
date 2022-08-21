@@ -12,6 +12,8 @@ interface Dragon721Service {
         privateKey: String,
     )
 
+    fun ownerOf(tokenId: Long): Result<String>
+
     fun getSymbol(): String
     fun getTokenUri(tokenId: Long): String
     fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork>
