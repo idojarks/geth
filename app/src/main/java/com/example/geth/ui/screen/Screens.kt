@@ -2,10 +2,8 @@ package com.example.geth.ui.screen
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -48,6 +46,14 @@ sealed class HomeSubScreen(
 
         @Composable
         override fun getOutlinedIcon() = ImageVector.vectorResource(id = R.drawable.ic_list_alt_fill0_wght400_grad0_opsz24)
+    }
+
+    object ContractSettings : HomeSubScreen("contractSettings", R.string.nav_contract_settings, "contract") {
+        @Composable
+        override fun getFilledIcon() = Icons.Filled.Email
+
+        @Composable
+        override fun getOutlinedIcon() = Icons.Outlined.Email
     }
 }
 

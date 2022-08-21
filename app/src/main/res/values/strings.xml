@@ -8,6 +8,7 @@
     <string name="newAccount">New account</string>
     <string name="editAccount">Edit account</string>
     <string name="nav_dragon721Tokens">Tokens</string>
+    <string name="nav_contract_settings">Contract</string>
     <string name="registerAccount">Register</string>
     <string name="updateAccount">Update</string>
 </resources>

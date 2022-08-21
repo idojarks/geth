@@ -22,11 +22,13 @@ import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.HomeSubScreen
 import com.example.geth.ui.screen.RootNavController
+import com.example.geth.ui.screen.home.route.contract.ContractSettingsScreen
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721InfoScreen
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721TokensScreen
 
 private val items = listOf(
     HomeSubScreen.Dragon721Tokens,
+    HomeSubScreen.ContractSettings,
     HomeSubScreen.Dragon721Info,
 )
 
@@ -115,7 +117,10 @@ fun HomeScreen() {
             composable(HomeSubScreen.Dragon721Tokens.route) {
                 Dragon721TokensScreen(defaultAccount = defaultAccount.value)
             }
-
+            // contract
+            composable(HomeSubScreen.ContractSettings.route) {
+                ContractSettingsScreen()
+            }
             // settings screen
             composable(HomeSubScreen.Dragon721Info.route) {
                 Dragon721InfoScreen()
