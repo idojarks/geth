@@ -43,21 +43,16 @@ fun Dragon721TokensScreen(
             loadingStateFlow.emit("Loading artworks")
             delay(1)
 
-            model.loadArtworks()
-                .run {
-                    val list = mutableListOf<ArtworkToken>()
+            val list = mutableListOf<ArtworkToken>()
 
-                    forEachIndexed { index, artwork ->
-                        ArtworkToken(
-                            index = index,
-                            context = artwork,
-                        ).run {
-                            list.add(this)
-                        }
-                    }
+            model.artworks.forEachIndexed { index, artwork ->
+                list.add(ArtworkToken(
+                    index = index,
+                    context = artwork,
+                ))
+            }
 
-                    artworkTokenListStateFlow.emit(list)
-                }
+            artworkTokenListStateFlow.emit(list)
         }
     }
 

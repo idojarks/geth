@@ -25,7 +25,10 @@ class EtherViewModel(
     val accounts = MutableLiveData<List<EtherAccount>>()
     val defaultAccount = MutableLiveData<EtherAccount>()
     val reloadAccounts = MutableLiveData(true)
-    val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
+
+    val artworks by lazy {
+        dragon721Service.getAllArtworks()
+    }
 
     suspend fun loadAccounts() = coroutineScope {
         val list = accountRepository.getAccounts()
@@ -81,19 +84,9 @@ class EtherViewModel(
         )
     }
 
-    fun loadArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
-        val result = dragon721Service.getAllArtworks()
-        artworks.value = result
-        return result
-    }
-
     fun getArtwork(index: Int): Result<Contracts_Dragon721_sol_Dragon721.Artwork?> {
-        if (artworks.value?.isEmpty() == true) {
-            loadArtworks()
-        }
-
         return kotlin.runCatching {
-            artworks.value?.elementAt(index)
+            artworks.elementAt(index)
         }
     }
 }
