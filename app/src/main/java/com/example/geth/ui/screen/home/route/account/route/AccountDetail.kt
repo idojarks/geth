@@ -25,6 +25,7 @@ import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.service.account.InspectionModeAccountRepository
 import com.example.geth.service.blockchain.InspectionModeDragon721Service
+import com.example.geth.service.contract.ContractInspectionModeRepository
 import com.example.geth.web3.Web3Utils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -271,6 +272,7 @@ fun PreviewNewAccount() {
                 ),
             ),
         ),
+        contractRepository = ContractInspectionModeRepository(),
         dragon721Service = InspectionModeDragon721Service(),
     )
 

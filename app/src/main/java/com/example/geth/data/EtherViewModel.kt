@@ -10,6 +10,8 @@ import com.example.geth.service.account.AccountRepository
 import com.example.geth.service.account.InspectionModeAccountRepository
 import com.example.geth.service.blockchain.Dragon721Service
 import com.example.geth.service.blockchain.InspectionModeDragon721Service
+import com.example.geth.service.contract.ContractInspectionModeRepository
+import com.example.geth.service.contract.ContractRepository
 import kotlinx.coroutines.coroutineScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -20,6 +22,7 @@ import org.koin.dsl.module
 
 class EtherViewModel(
     val accountRepository: AccountRepository,
+    val contractRepository: ContractRepository,
     val dragon721Service: Dragon721Service,
 ) : ViewModel() {
     val accounts = MutableLiveData<List<EtherAccount>>()
@@ -130,12 +133,16 @@ fun getInspectionModeViewModel(): EtherViewModel {
             )
         }
 
+        single<ContractRepository> {
+            ContractInspectionModeRepository()
+        }
+
         single<Dragon721Service> {
             InspectionModeDragon721Service()
         }
 
         viewModel {
-            EtherViewModel(get(), get())
+            EtherViewModel(get(), get(), get())
         }
     }
 

@@ -7,6 +7,8 @@ import com.example.geth.service.account.AccountRepository
 import com.example.geth.service.account.FileAccountRepository
 import com.example.geth.service.blockchain.Dragon721Service
 import com.example.geth.service.blockchain.Web3Dragon721Service
+import com.example.geth.service.contract.ContractFileRepository
+import com.example.geth.service.contract.ContractRepository
 import com.google.android.material.color.DynamicColors
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -40,12 +42,19 @@ class MyApplication : Application() {
                 )
             }
 
+            single<ContractRepository> {
+                ContractFileRepository(
+                    context = getContext(),
+                    filename = "contracts",
+                )
+            }
+
             single<Dragon721Service> {
                 Web3Dragon721Service()
             }
 
             viewModel {
-                EtherViewModel(get(), get())
+                EtherViewModel(get(), get(), get())
             }
         }
 
