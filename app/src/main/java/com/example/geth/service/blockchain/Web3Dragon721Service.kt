@@ -23,7 +23,7 @@ class Web3Dragon721Service : Dragon721Service {
     private var dragon721Contract: Contracts_Dragon721_sol_Dragon721? = null
 
     init {
-        val url = StringBuilder(EtherUrl.infuraRopsten)
+        val url = StringBuilder(EtherUrl.alchemy_goerli)
 
         if (url.isEmpty()) {
             val newEtherUrl = EtherUrl.getLocalEthUrl()
