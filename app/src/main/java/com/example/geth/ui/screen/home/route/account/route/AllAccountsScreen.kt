@@ -36,7 +36,7 @@ fun AllAccountsScreen(
     //val reloadAccounts = model.reloadAccounts.observeAsState(true)
 
     val progressStateFlow = remember {
-        MutableStateFlow(false)
+        MutableStateFlow(true)
     }
     val showProgressIndicator by progressStateFlow.collectAsState()
 
