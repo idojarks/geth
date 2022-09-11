@@ -56,12 +56,12 @@ fun MainView(
                     },
                 ),
             ) {
-                val id = checkNotNull(it.arguments?.getInt("id"))
+                val index = checkNotNull(it.arguments?.getInt("id"))
                 val title = checkNotNull(it.arguments?.getString("title"))
                 val artist = checkNotNull(it.arguments?.getString("artist"))
 
                 Dragon721ArtworkDetailScreen(
-                    tokenId = id,
+                    index = index,
                     title = title,
                     artist = artist,
                 )

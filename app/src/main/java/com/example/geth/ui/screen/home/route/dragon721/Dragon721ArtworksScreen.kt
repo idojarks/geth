@@ -20,6 +20,7 @@ import coil.compose.SubcomposeAsyncImageContent
 import com.example.geth.data.ArtworkToken
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.service.http.HttpClient
+import com.example.geth.ui.screen.RootNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -72,6 +73,7 @@ private fun ArtworkCard(
     artwork: ArtworkToken,
 ) {
     val model = LocalEtherViewModelProvider.current
+    val rootNavController = RootNavController.current
     val scope = rememberCoroutineScope()
 
     val loadingTokenStateFlow = remember {
@@ -79,7 +81,14 @@ private fun ArtworkCard(
     }
     val loadingTokenState by loadingTokenStateFlow.collectAsState()
 
-    Card(modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(
+        onClick = {
+            rootNavController.navigate(
+                route = "artworkDetail?id=${artwork.index}&title=${artwork.context.title}&artist=${artwork.context.artist}",
+            )
+        },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         when (loadingTokenState.first) {
             ArtworkToken.LoadingTokenState.Start -> {
                 Box(

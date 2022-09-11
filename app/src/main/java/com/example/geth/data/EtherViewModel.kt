@@ -30,8 +30,11 @@ class EtherViewModel(
     val defaultContract = MutableLiveData<EtherContract>()
     val tokenUrlList = MutableLiveData(mutableListOf<String>())
 
-    //val openAccountScreen = MutableLiveData(false)
-    val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
+    //val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
+    val artworks by lazy {
+        dragon721Service.getAllArtworks()
+    }
+
     val reloadAccounts = MutableLiveData(true)
 
     val contracts = MutableLiveData<MutableList<EtherContract>>(mutableListOf())
@@ -116,6 +119,12 @@ class EtherViewModel(
             ?.let {
                 defaultAccount.postValue(it)
             }
+    }
+
+    fun getArtwork(index: Int): Result<Contracts_Dragon721_sol_Dragon721.Artwork?> {
+        return kotlin.runCatching {
+            artworks.elementAt(index)
+        }
     }
 }
 
