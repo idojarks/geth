@@ -3,7 +3,7 @@ package com.example.geth.data
 object EtherUrl {
     const val gasPrice = "https://api.gasprice.io/v1/estimates/"
     const val infuraRopsten = "https://ropsten.infura.io/v3/c7c3743a100841048f439743d078ea0d"
-    const val contractAddress = "0x983EAD129Eb9Ee8577A7f6E15f66F282E1f42dC7"
+    //const val contractAddress = "0x983EAD129Eb9Ee8577A7f6E15f66F282E1f42dC7"
 
     fun getLocalEthUrl(): String {
         // "http://10.0.2.2:8545" <- 에뮬레이터에서 PC의 localhost로 접속

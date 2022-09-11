@@ -3,6 +3,13 @@ package com.example.geth.service.contract
 import com.example.geth.data.EtherContract
 
 class ContractInspectionModeRepository : ContractRepository {
+    override val contracts
+        get() = mutableListOf(EtherContract(
+            name = "first",
+            address = "0xfirst",
+            isDefault = true,
+        ))
+
     override fun add(contract: EtherContract): Boolean {
         return true
     }
@@ -23,4 +30,7 @@ class ContractInspectionModeRepository : ContractRepository {
         TODO("Not yet implemented")
     }
 
+    override fun get(address: String): EtherContract? {
+        TODO("Not yet implemented")
+    }
 }

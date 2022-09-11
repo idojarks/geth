@@ -2,12 +2,13 @@ package com.example.geth.service.account
 
 import com.example.geth.data.EtherAccount
 
-class InspectionModeAccountRepository(
-    private val accounts: MutableList<EtherAccount>,
-) : AccountRepository {
-    override fun getAccounts(): List<EtherAccount> {
-        return accounts
-    }
+class InspectionModeAccountRepository : AccountRepository {
+    override val accounts: MutableList<EtherAccount> = mutableListOf(EtherAccount(
+        name = "test",
+        address = "0xaddress",
+        privateKey = "0xprivatekey",
+        isDefault = true,
+    ))
 
     override fun addAccount(account: EtherAccount): List<EtherAccount> {
         accounts.add(account)
@@ -23,6 +24,15 @@ class InspectionModeAccountRepository(
         return accounts
     }
 
-    override fun setDefaultAccount(account: EtherAccount) {
+    override fun setDefault(account: EtherAccount) {
+    }
+
+    override fun getDefault(): EtherAccount {
+        return EtherAccount(
+            name = "test",
+            address = "0xaddress",
+            privateKey = "0xprivateKey",
+            isDefault = true,
+        )
     }
 }

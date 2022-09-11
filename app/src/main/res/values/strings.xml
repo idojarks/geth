@@ -5,10 +5,16 @@
     <string name="nav_account">Account</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_all_accounts">Accounts</string>
-    <string name="newAccount">New account</string>
-    <string name="editAccount">Edit account</string>
+    <string name="new_account">New account</string>
+    <string name="edit_account">Edit account</string>
     <string name="nav_dragon721Tokens">Tokens</string>
     <string name="nav_contract_settings">Contract</string>
-    <string name="registerAccount">Register</string>
-    <string name="updateAccount">Update</string>
+    <string name="register_account">Register</string>
+    <string name="update_account">Update</string>
+    <string name="nav_all_contracts">Contracts</string>
+    <string name="nav_contract">Contract</string>
+    <string name="new_contract">New contract</string>
+    <string name="edit_contract">Edit contract</string>
+    <string name="register_contract">Register</string>
+    <string name="update_contract">Update</string>
 </resources>

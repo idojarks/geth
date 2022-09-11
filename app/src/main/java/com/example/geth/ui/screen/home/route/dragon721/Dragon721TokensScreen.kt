@@ -12,16 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.geth.data.ArtworkToken
-import com.example.geth.data.EtherAccount
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun Dragon721TokensScreen(
-    defaultAccount: EtherAccount?,
-) {
+fun Dragon721TokensScreen() {
     val model = LocalEtherViewModelProvider.current
 
     val loadingStateFlow = remember {
@@ -34,31 +31,61 @@ fun Dragon721TokensScreen(
     }
     val artworkTokenList by artworkTokenListStateFlow.collectAsState()
 
-    LaunchedEffect(key1 = defaultAccount) {
-        defaultAccount?.let { account ->
-            loadingStateFlow.emit("Loading contract")
-            delay(1)
-            model.loadContract(account)
+    val defaultAccount = model.accountRepository.getDefault()
+    val defaultContract = model.contractRepository.getDefault()
 
-            loadingStateFlow.emit("Loading artworks")
-            delay(1)
-
-            model.loadArtworks()
-                .run {
-                    val list = mutableListOf<ArtworkToken>()
-
-                    forEachIndexed { index, artwork ->
-                        ArtworkToken(
-                            index = index,
-                            context = artwork,
-                        ).run {
-                            list.add(this)
-                        }
-                    }
-
-                    artworkTokenListStateFlow.emit(list)
-                }
+    LaunchedEffect(
+        key1 = defaultAccount,
+        key2 = defaultContract,
+    ) {
+        if (defaultAccount == null || defaultContract == null) {
+            return@LaunchedEffect
         }
+
+        loadingStateFlow.emit("Loading contract")
+        delay(1)
+        model.loadContract()
+
+        loadingStateFlow.emit("Loading artworks")
+        delay(1)
+
+        model.loadArtworks()
+            .run {
+                val list = mutableListOf<ArtworkToken>()
+
+                forEachIndexed { index, artwork ->
+                    ArtworkToken(
+                        index = index,
+                        context = artwork,
+                    ).run {
+                        list.add(this)
+                    }
+                }
+
+                artworkTokenListStateFlow.emit(list)
+            }
+    }
+
+    if (defaultAccount == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = "Set default account")
+        }
+
+        return
+    }
+
+    if (defaultContract == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(text = "Set default contract")
+        }
+
+        return
     }
 
     if (artworkTokenList.isEmpty()) {
@@ -88,14 +115,7 @@ private fun PreviewTokens() {
     CompositionLocalProvider(
         LocalEtherViewModelProvider provides getInspectionModeViewModel(),
     ) {
-        Dragon721TokensScreen(
-            defaultAccount = EtherAccount(
-                name = "john",
-                address = "0x00",
-                privateKey = "0x00",
-                isDefault = true,
-            ),
-        )
+        Dragon721TokensScreen()
     }
 }
 

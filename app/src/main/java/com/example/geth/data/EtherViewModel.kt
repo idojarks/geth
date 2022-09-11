@@ -25,23 +25,28 @@ class EtherViewModel(
     val contractRepository: ContractRepository,
     val dragon721Service: Dragon721Service,
 ) : ViewModel() {
-    val accounts = MutableLiveData<List<EtherAccount>>()
+    val accounts = MutableLiveData<MutableList<EtherAccount>>(mutableListOf())
     val defaultAccount = MutableLiveData<EtherAccount>()
+    val defaultContract = MutableLiveData<EtherContract>()
     val tokenUrlList = MutableLiveData(mutableListOf<String>())
+
     //val openAccountScreen = MutableLiveData(false)
     val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
     val reloadAccounts = MutableLiveData(true)
 
+    val contracts = MutableLiveData<MutableList<EtherContract>>(mutableListOf())
+
     suspend fun loadAccounts() = coroutineScope {
-        val list = accountRepository.getAccounts()
-        accounts.postValue(list)
+        accounts.postValue(accountRepository.accounts)
         reloadAccounts.postValue(false)
     }
-
+/*
     fun addAccount(account: EtherAccount) {
         accounts.value = accountRepository.addAccount(account)
         loadDefaultAccount()
     }
+
+ */
 
     fun deleteAccount(account: EtherAccount) {
         accountRepository.deleteAccount(account)
@@ -49,7 +54,7 @@ class EtherViewModel(
 
         reloadAccounts.value = true
     }
-
+/*
     fun editAccount(
         srcAccount: EtherAccount,
         dstAccount: EtherAccount,
@@ -58,34 +63,41 @@ class EtherViewModel(
         loadDefaultAccount()
     }
 
+ */
+
     fun getAccount(address: String): EtherAccount? {
-        return accountRepository.getAccounts()
-            .find {
-                it.address == address
-            }
+        return accountRepository.accounts.find {
+            it.address == address
+        }
     }
 
     fun setDefaultAccount(account: EtherAccount) {
-        accountRepository.setDefaultAccount(account)
+        accountRepository.setDefault(account)
         loadDefaultAccount()
 
         reloadAccounts.value = true
     }
 
     fun loadDefaultAccount() {
-        defaultAccount.value = accountRepository.getAccounts()
-            .find {
-                it.isDefault
-            }
+        defaultAccount.value = accountRepository.getDefault()
     }
 
-    fun loadContract(account: EtherAccount) {
+    fun loadDefaultContract() {
+        defaultContract.value = contractRepository.getDefault()
+    }
+
+    fun loadContract(): Boolean {
+        val defaultAccount = accountRepository.getDefault()
+            ?: return false
+        val defaultContract = contractRepository.getDefault()
+            ?: return false
+
         dragon721Service.loadContract(
-            contractAddress = EtherUrl.contractAddress,
-            privateKey = account.privateKey,
+            contractAddress = defaultContract.address,
+            privateKey = defaultAccount.privateKey,
         )
 
-        //artworks.value = dragon721Service.getAllArtworks()
+        return true
     }
 
     fun loadArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
@@ -93,7 +105,7 @@ class EtherViewModel(
     }
 
     fun loadDefaultAccountInCoroutine() {
-        accountRepository.getAccounts()
+        accountRepository.accounts
             .find {
                 if (it.isDefault) {
                     println("default account loaded : $it")
@@ -115,22 +127,7 @@ val LocalEtherViewModelProvider = compositionLocalOf<EtherViewModel> {
 fun getInspectionModeViewModel(): EtherViewModel {
     val modelModule = module {
         single<AccountRepository> {
-            InspectionModeAccountRepository(
-                mutableListOf(
-                    EtherAccount(
-                        name = "john",
-                        address = "0x000000",
-                        privateKey = "0x11111",
-                        isDefault = true,
-                    ),
-                    EtherAccount(
-                        name = "yong",
-                        address = "0x000000",
-                        privateKey = "0x11111",
-                        isDefault = false,
-                    ),
-                ),
-            )
+            InspectionModeAccountRepository()
         }
 
         single<ContractRepository> {

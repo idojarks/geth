@@ -3,11 +3,11 @@ package com.example.geth.ui.screen.home
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,13 +22,12 @@ import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.HomeSubScreen
 import com.example.geth.ui.screen.RootNavController
-import com.example.geth.ui.screen.home.route.contract.ContractSettingsScreen
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721InfoScreen
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721TokensScreen
 
 private val items = listOf(
     HomeSubScreen.Dragon721Tokens,
-    HomeSubScreen.ContractSettings,
+//    HomeSubScreen.ContractSettings,
     HomeSubScreen.Dragon721Info,
 )
 
@@ -38,13 +37,22 @@ fun HomeScreen() {
     val navController = rememberNavController()
     val model = LocalEtherViewModelProvider.current
     val rootNavController = RootNavController.current
-
+/*
     val defaultAccount = model.defaultAccount.observeAsState()
+    val defaultContract = model.defaultContract.observeAsState()
 
     model.loadDefaultAccount()
+ */
 
     Scaffold(
         topBar = {
+            /*
+            var expanded by remember {
+                mutableStateOf(false)
+            }
+
+             */
+
             SmallTopAppBar(
                 title = {
                     Text(
@@ -53,9 +61,10 @@ fun HomeScreen() {
                 },
                 actions = {
                     // default account
-                    defaultAccount.value?.let {
-                        Text(text = it.name)
-                    }
+                    model.accountRepository.getDefault()
+                        ?.let {
+                            Text(text = it.name)
+                        }
 
                     IconButton(
                         onClick = {
@@ -68,6 +77,53 @@ fun HomeScreen() {
                             contentDescription = "account",
                         )
                     }
+
+                    IconButton(
+                        onClick = {
+                            rootNavController.navigate("contracts")
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Email,
+                            contentDescription = "contracts",
+                        )
+                    }
+/*
+                    Box(
+                        modifier = Modifier.wrapContentSize(Alignment.TopStart),
+                    ) {
+                        IconButton(
+                            onClick = {
+                                expanded = true
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.MoreVert,
+                                contentDescription = "overflow",
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(stringResource(id = R.string.nav_contract))
+                                },
+                                onClick = {
+                                    rootNavController.navigate("contracts")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Email,
+                                        contentDescription = "contracts",
+                                    )
+                                },
+                            )
+                        }
+                    }
+
+ */
                 },
             )
         },
@@ -115,12 +171,16 @@ fun HomeScreen() {
         ) {
             // tokens
             composable(HomeSubScreen.Dragon721Tokens.route) {
-                Dragon721TokensScreen(defaultAccount = defaultAccount.value)
+                Dragon721TokensScreen()
             }
-            // contract
+/*
+            // contracts
             composable(HomeSubScreen.ContractSettings.route) {
-                ContractSettingsScreen()
+                ContractsScreen()
             }
+
+ */
+
             // settings screen
             composable(HomeSubScreen.Dragon721Info.route) {
                 Dragon721InfoScreen()

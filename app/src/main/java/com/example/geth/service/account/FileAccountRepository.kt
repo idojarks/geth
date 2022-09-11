@@ -11,17 +11,12 @@ class FileAccountRepository(
     private val context: Context,
     private val filename: String,
 ) : AccountRepository {
-    private var accounts = listOf<EtherAccount>()
-
-    override fun getAccounts(): List<EtherAccount> {
-        loadIfAccountsEmpty()
-
-        return accounts
+    override val accounts by lazy {
+        load()
     }
 
     override fun addAccount(account: EtherAccount): List<EtherAccount> {
         account.validateBeforeUse()
-        loadIfAccountsEmpty()
 
         accounts.find {
             it.address == account.address
@@ -46,9 +41,11 @@ class FileAccountRepository(
             list.add(account)
         }
 
-        accounts = list.sortedByDescending {
+        accounts.clear()
+        accounts.addAll(list.sortedByDescending {
             it.isDefault
-        }
+        })
+
         updateAccountsToFile()
 
         return accounts
@@ -61,7 +58,9 @@ class FileAccountRepository(
             it != account
         }
 
-        accounts = list
+        accounts.clear()
+        accounts.addAll(list)
+
         updateAccountsToFile()
 
         return accounts
@@ -74,28 +73,30 @@ class FileAccountRepository(
         srcAccount.validateBeforeUse()
         dstAccount.validateBeforeUse()
 
-        accounts = accounts.map {
+        accounts.clear()
+        accounts.addAll(accounts.map {
             if (it == srcAccount) {
                 dstAccount
             }
             else {
                 it
             }
-        }
+        })
 
         updateAccountsToFile()
 
         return accounts
     }
 
-    override fun setDefaultAccount(account: EtherAccount) {
+    override fun setDefault(account: EtherAccount) {
         if (account.isDefault) {
             return
         }
 
         account.validateBeforeUse()
 
-        accounts = accounts.map {
+        accounts.clear()
+        accounts.addAll(accounts.map {
             if (it.isDefault) {
                 EtherAccount(it.name, it.address, it.privateKey, false)
             }
@@ -108,20 +109,22 @@ class FileAccountRepository(
         }
             .sortedByDescending {
                 it.isDefault
-            }
+            })
 
         updateAccountsToFile()
     }
 
-    private fun loadIfAccountsEmpty() {
-        if (accounts.isNotEmpty()) {
-            return
+    override fun getDefault(): EtherAccount? {
+        return accounts.find {
+            it.isDefault
         }
+    }
 
+    private fun load(): MutableList<EtherAccount> {
         val file = File(context.filesDir, filename)
 
         if (!file.exists()) {
-            return
+            return mutableListOf()
         }
 
         val sb = StringBuilder()
@@ -135,14 +138,14 @@ class FileAccountRepository(
             }
 
         if (sb.isEmpty()) {
-            return
+            return mutableListOf()
         }
 
         val json = JSONObject(sb.toString())
         val array = json.getJSONArray("accounts")
 
         if (array.length() == 0) {
-            return
+            return mutableListOf()
         }
 
         val list = mutableListOf<EtherAccount>()
@@ -164,7 +167,7 @@ class FileAccountRepository(
             }
         }
 
-        accounts = list
+        return list
     }
 
     private fun updateAccountsToFile() {

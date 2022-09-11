@@ -12,7 +12,7 @@ class ContractFileRepository(
     private val filename: String,
     private val showToast: Boolean = true,
 ) : ContractRepository {
-    val contracts by lazy {
+    override val contracts by lazy {
         load()
     }
 
@@ -90,6 +90,12 @@ class ContractFileRepository(
     override fun getDefault(): EtherContract? {
         return contracts.find {
             it.isDefault
+        }
+    }
+
+    override fun get(address: String): EtherContract? {
+        return contracts.find {
+            it.address == address
         }
     }
 

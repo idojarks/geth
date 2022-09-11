@@ -12,6 +12,7 @@ import com.example.geth.data.EtherViewModel
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.ui.screen.home.HomeScreen
 import com.example.geth.ui.screen.home.route.account.AccountScreen
+import com.example.geth.ui.screen.home.route.contract.ContractsScreen
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721ArtworkDetailScreen
 
 val RootNavController = compositionLocalOf<NavHostController> {
@@ -37,6 +38,9 @@ fun MainView(
             }
             composable("account") {
                 AccountScreen()
+            }
+            composable("contracts") {
+                ContractsScreen()
             }
             composable(
                 route = "artworkDetail?id={id}&title={title}&artist={artist}",
