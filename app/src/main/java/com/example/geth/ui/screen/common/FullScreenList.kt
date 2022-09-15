@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
@@ -30,7 +31,10 @@ fun FullScreenList(
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
+                title = {
+                    Text(text = title)
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -42,9 +46,6 @@ fun FullScreenList(
                             contentDescription = "back",
                         )
                     }
-                },
-                title = {
-                    Text(text = title)
                 },
                 actions = {
                     IconButton(
@@ -118,6 +119,9 @@ fun AddressBasedCard(
                 Text(
                     text = name,
                     style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.fillMaxWidth(0.85f),
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 if (isDefault) {
@@ -130,9 +134,7 @@ fun AddressBasedCard(
                 }
             }
 
-            Divider(
-                modifier = Modifier.padding(top = 6.dp, bottom = 6.dp),
-            )
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
                 text = "Address",
@@ -154,7 +156,7 @@ fun AddressBasedCard(
                     color = MaterialTheme.colorScheme.tertiary,
                 )
                 Text(
-                    text = privateKey,
+                    text = it,
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Spacer(
@@ -165,6 +167,8 @@ fun AddressBasedCard(
             extraContents?.let {
                 it()
             }
+
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -236,18 +240,16 @@ fun AddressBasedCard(
 
 @Preview
 @Composable
-private fun preview() {
-    val rootNavController = rememberNavController()
-
+private fun Preview() {
     CompositionLocalProvider(
         LocalEtherViewModelProvider provides getInspectionModeViewModel(),
-        RootNavController provides rootNavController,
+        RootNavController provides rememberNavController(),
     ) {
         AddressBasedCard(
-            name = "test",
+            name = "asdfdsafadsfadslfjslkadfjslafjlaksdfljalkj",
             address = "0xtest",
             privateKey = null,
-            isDefault = false,
+            isDefault = true,
             onClickDefaultButton = { /*TODO*/ },
             onClickEditMenu = { /*TODO*/ },
             onClickDeleteMenu = {},

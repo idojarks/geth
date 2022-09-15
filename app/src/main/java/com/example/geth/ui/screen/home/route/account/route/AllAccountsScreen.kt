@@ -41,20 +41,9 @@ fun AllAccountsScreen(
     val showProgressIndicator by progressStateFlow.collectAsState()
 
     LaunchedEffect(key1 = accounts) {
-        model.accounts.value?.let {
-            if (it.isEmpty()) {
-                val accountsFromRepo = model.accountRepository.accounts
-
-                if (accountsFromRepo.isEmpty()) {
-                    progressStateFlow.emit(false)
-                }
-                else {
-                    model.accounts.postValue(accountsFromRepo)
-                }
-            }
-            else {
-                progressStateFlow.emit(false)
-            }
+        launch(Dispatchers.IO) {
+            model.accounts.postValue(model.accountRepository.accounts)
+            progressStateFlow.emit(false)
         }
     }
 /*
@@ -79,9 +68,9 @@ fun AllAccountsScreen(
         onClickAddButton = {
             navController.navigate("account")
         },
-        lazyColumnContent = {
+        lazyColumnContent = { lazyListScope ->
             accounts.value?.forEach { account ->
-                it.item {
+                lazyListScope.item {
                     AddressBasedCard(
                         name = account.name,
                         address = account.address,

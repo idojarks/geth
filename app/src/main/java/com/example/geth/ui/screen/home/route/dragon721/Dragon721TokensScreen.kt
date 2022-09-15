@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.geth.data.ArtworkToken
-import com.example.geth.data.EtherAccount
 import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun Dragon721TokensScreen() {
@@ -43,28 +43,30 @@ fun Dragon721TokensScreen() {
             return@LaunchedEffect
         }
 
-        loadingStateFlow.emit("Loading contract")
-        delay(1)
-        model.loadContract()
+        launch(Dispatchers.IO) {
+            loadingStateFlow.emit("Loading contract")
+            model.dragon721Service.loadContract(
+                contract = defaultContract,
+                account = defaultAccount,
+            )
 
-        loadingStateFlow.emit("Loading artworks")
-        delay(1)
+            loadingStateFlow.emit("Loading artworks")
+            model.dragon721Service.getAllArtworks()
+                .run {
+                    val list = mutableListOf<ArtworkToken>()
 
-        model.loadArtworks()
-            .run {
-                val list = mutableListOf<ArtworkToken>()
-
-                forEachIndexed { index, artwork ->
-                    ArtworkToken(
-                        index = index,
-                        context = artwork,
-                    ).run {
-                        list.add(this)
+                    forEachIndexed { index, artwork ->
+                        ArtworkToken(
+                            index = index,
+                            context = artwork,
+                        ).run {
+                            list.add(this)
+                        }
                     }
-                }
 
-                artworkTokenListStateFlow.emit(list)
-            }
+                    artworkTokenListStateFlow.emit(list)
+                }
+        }
     }
 
     if (defaultAccount == null) {

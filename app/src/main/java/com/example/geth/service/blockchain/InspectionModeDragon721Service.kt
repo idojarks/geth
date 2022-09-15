@@ -1,6 +1,8 @@
 package com.example.geth.service.blockchain
 
 import com.example.geth.Contracts_Dragon721_sol_Dragon721
+import com.example.geth.data.EtherAccount
+import com.example.geth.data.EtherContract
 import io.reactivex.Flowable
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.BatchRequest
@@ -16,6 +18,7 @@ import org.web3j.protocol.core.methods.response.admin.AdminNodeInfo
 import org.web3j.protocol.core.methods.response.admin.AdminPeers
 import org.web3j.protocol.websocket.events.LogNotification
 import org.web3j.protocol.websocket.events.NewHeadsNotification
+import org.web3j.tx.Contract
 import java.math.BigInteger
 
 class InspectionModeDragon721Service : Dragon721Service {
@@ -372,8 +375,8 @@ class InspectionModeDragon721Service : Dragon721Service {
     override fun getVersion(): String = "Dragon721 v1.0"
     override fun getAccounts(): List<String> = listOf("john", "yong")
     override fun getBalance(address: String): String = "123.456"
-    override fun loadContract(contractAddress: String, privateKey: String) {}
-    override fun getSymbol(): String = "Dragon721"
+    override fun loadContract(contract: EtherContract, account: EtherAccount) {}
+    override fun getSymbol(contract: Contract): String = "Dragon721"
     override fun getTokenUri(tokenId: Long): String = "https://ipfs.io/ipfs/bafyreieptcrsawxiyqw75yc5mmgewmosneyohacc6mfzblivj3yiqrz3zq"
     override fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> = listOf(Contracts_Dragon721_sol_Dragon721.Artwork(
         "title",

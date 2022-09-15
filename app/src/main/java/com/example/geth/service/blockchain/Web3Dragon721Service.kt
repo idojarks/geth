@@ -2,6 +2,8 @@ package com.example.geth.service.blockchain
 
 import com.example.geth.Contracts_Dragon721_sol_Dragon721
 import com.example.geth.RealtimeGasProvider
+import com.example.geth.data.EtherAccount
+import com.example.geth.data.EtherContract
 import com.example.geth.data.EtherUrl
 import com.example.geth.service.http.HttpClient
 import com.example.geth.web3.Web3Utils
@@ -14,6 +16,7 @@ import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.http.HttpService
+import org.web3j.tx.Contract
 import org.web3j.utils.Convert
 import java.math.BigInteger
 
@@ -34,12 +37,8 @@ class Web3Dragon721Service : Dragon721Service {
     }
 
     override fun getVersion(): String {
-        return runCatching {
-            runBlocking(Dispatchers.IO) {
-                web3.web3ClientVersion()
-                    .send().web3ClientVersion
-            }
-        }.getOrDefault("error")
+        return web3.web3ClientVersion()
+            .send().web3ClientVersion
     }
 
     override fun getAccounts(): List<String> {
@@ -144,34 +143,28 @@ class Web3Dragon721Service : Dragon721Service {
  */
 
     override fun loadContract(
-        contractAddress: String,
-        privateKey: String,
+        contract: EtherContract,
+        account: EtherAccount,
     ) {
-        val credentials = Credentials.create(privateKey)
+        val credentials = Credentials.create(account.privateKey)
         val gasProvider = RealtimeGasProvider()
 
         dragon721Contract = Contracts_Dragon721_sol_Dragon721.load(
-            contractAddress,
+            contract.address,
             web3,
             credentials,
             gasProvider,
         )
+
+        contract.web3Contract = dragon721Contract
     }
 
-    override fun getSymbol(): String {
-        val sb = StringBuilder()
-
-        runBlocking(Dispatchers.IO) {
-            checkNotNull(dragon721Contract).symbol()
-                .flowable()
-                .subscribe({
-                    sb.append(it)
-                }, {
-                    sb.append(it.message)
-                })
+    override fun getSymbol(contract: Contract): String {
+        return when (contract) {
+            is Contracts_Dragon721_sol_Dragon721 -> contract.symbol()
+                .send()
+            else -> "Unrecognizable contract"
         }
-
-        return sb.toString()
     }
 
     override fun getTokenUri(tokenId: Long): String {

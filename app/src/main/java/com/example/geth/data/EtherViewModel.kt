@@ -85,10 +85,13 @@ class EtherViewModel(
         defaultAccount.value = accountRepository.getDefault()
     }
 
-    fun loadDefaultContract() {
-        defaultContract.value = contractRepository.getDefault()
-    }
+    /*
+        fun loadDefaultContract() {
+            defaultContract.value = contractRepository.getDefault()
+        }
 
+     */
+/*
     fun loadContract(): Boolean {
         val defaultAccount = accountRepository.getDefault()
             ?: return false
@@ -103,10 +106,14 @@ class EtherViewModel(
         return true
     }
 
+ */
+/*
     fun loadArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
         return dragon721Service.getAllArtworks()
     }
 
+ */
+/*
     fun loadDefaultAccountInCoroutine() {
         accountRepository.accounts
             .find {
@@ -120,7 +127,7 @@ class EtherViewModel(
                 defaultAccount.postValue(it)
             }
     }
-
+*/
     fun getArtwork(index: Int): Result<Contracts_Dragon721_sol_Dragon721.Artwork?> {
         return kotlin.runCatching {
             artworks.elementAt(index)

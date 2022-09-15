@@ -14,6 +14,7 @@ import com.example.geth.ui.screen.home.HomeScreen
 import com.example.geth.ui.screen.home.route.account.AccountScreen
 import com.example.geth.ui.screen.home.route.contract.ContractsScreen
 import com.example.geth.ui.screen.home.route.dragon721.Dragon721ArtworkDetailScreen
+import com.example.geth.ui.screen.home.route.dragon721.Dragon721InfoScreen
 
 val RootNavController = compositionLocalOf<NavHostController> {
     error("")
@@ -36,11 +37,14 @@ fun MainView(
             composable("home") {
                 HomeScreen()
             }
-            composable("account") {
+            composable("accounts") {
                 AccountScreen()
             }
             composable("contracts") {
                 ContractsScreen()
+            }
+            composable("dragon721Info") {
+                Dragon721InfoScreen()
             }
             composable(
                 route = "artworkDetail?id={id}&title={title}&artist={artist}",

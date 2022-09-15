@@ -3,8 +3,10 @@ package com.example.geth.ui.screen
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -32,6 +34,14 @@ sealed class HomeSubScreen(
     @Composable
     abstract fun getOutlinedIcon(): ImageVector
 
+    object Home : HomeSubScreen("home", R.string.nav_home, "home") {
+        @Composable
+        override fun getFilledIcon() = Icons.Filled.Home
+
+        @Composable
+        override fun getOutlinedIcon() = Icons.Outlined.Home
+    }
+
     object Dragon721Info : HomeSubScreen("dragon721Info", R.string.nav_info, "info") {
         @Composable
         override fun getFilledIcon() = Icons.Filled.Info
@@ -48,12 +58,20 @@ sealed class HomeSubScreen(
         override fun getOutlinedIcon() = ImageVector.vectorResource(id = R.drawable.ic_list_alt_fill0_wght400_grad0_opsz24)
     }
 
-    object ContractSettings : HomeSubScreen("contractSettings", R.string.nav_contract_settings, "contract") {
+    object Contracts : HomeSubScreen("contracts", R.string.nav_all_contracts, "contracts") {
         @Composable
-        override fun getFilledIcon() = Icons.Filled.Email
+        override fun getFilledIcon() = Icons.Filled.List
 
         @Composable
-        override fun getOutlinedIcon() = Icons.Outlined.Email
+        override fun getOutlinedIcon() = Icons.Outlined.List
+    }
+
+    object Accounts : HomeSubScreen("accounts", R.string.nav_all_accounts, "accounts") {
+        @Composable
+        override fun getFilledIcon() = Icons.Filled.AccountCircle
+
+        @Composable
+        override fun getOutlinedIcon() = Icons.Outlined.AccountCircle
     }
 }
 

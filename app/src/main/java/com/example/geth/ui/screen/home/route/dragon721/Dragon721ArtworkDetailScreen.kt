@@ -83,7 +83,7 @@ fun Dragon721ArtworkDetailScreen(
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
                 title = {},
                 navigationIcon = {
                     IconButton(
@@ -288,7 +288,7 @@ private fun InvalidArtwork(index: Int) {
 
 @Preview
 @Composable
-private fun _Dragon721ArtworkDetailScreen() {
+private fun Preview() {
     CompositionLocalProvider(
         LocalEtherViewModelProvider provides getInspectionModeViewModel(),
         RootNavController provides rememberNavController(),

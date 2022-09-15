@@ -60,24 +60,21 @@ fun AddressBasedDetail(
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                title = {
-                    Text(
-                        text = title,
+            TopAppBar(title = {
+                Text(
+                    text = title,
+                )
+            }, navigationIcon = {
+                // back
+                IconButton(
+                    onClick = onClickBackButton,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "back",
                     )
-                },
-                navigationIcon = {
-                    // back
-                    IconButton(
-                        onClick = onClickBackButton,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "back",
-                        )
-                    }
-                },
-            )
+                }
+            })
         },
     ) { paddingValues ->
         Column(
