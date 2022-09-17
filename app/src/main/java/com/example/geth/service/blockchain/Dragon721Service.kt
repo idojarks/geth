@@ -14,9 +14,7 @@ interface Dragon721Service {
         contract: EtherContract,
         account: EtherAccount,
     )
-
     fun ownerOf(tokenId: Long): Result<String>
-
     fun getSymbol(contract: Contract): String
     fun getTokenUri(tokenId: Long): String
     fun getAllArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork>

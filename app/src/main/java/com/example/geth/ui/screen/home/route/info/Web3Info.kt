@@ -1,13 +1,14 @@
-package com.example.geth.ui.screen.home.route.dragon721
+package com.example.geth.ui.screen.home.route.info
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Dragon721InfoScreen() {
+fun Web3Info() {
     val model = LocalEtherViewModelProvider.current
     val rootNavController = RootNavController.current
 
@@ -53,27 +54,13 @@ fun Dragon721InfoScreen() {
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
             val flow = remember {
-                MutableStateFlow(Pair("", ""))
+                MutableStateFlow("")
             }
-            val flowState = flow.collectAsState()
-            val (version, symbol) = flowState.value
+            val web3Version by flow.collectAsState()
+            val scope = rememberCoroutineScope()
 
-            LaunchedEffect(key1 = model.contractRepository.getDefault()) {
-                val contract = model.contractRepository.getDefault()
-
-                if (contract?.web3Contract == null) {
-                    flow.emit(Pair("", ""))
-                    return@LaunchedEffect
-                }
-
-                launch(Dispatchers.IO) {
-                    contract.web3Contract?.let {
-                        val web3Version = model.dragon721Service.getVersion()
-                        val tokenSymbol = model.dragon721Service.getSymbol(it)
-
-                        flow.emit(Pair(web3Version, tokenSymbol))
-                    }
-                }
+            scope.launch(Dispatchers.IO) {
+                flow.emit(model.dragon721Service.getVersion())
             }
 
             Text(
@@ -85,26 +72,21 @@ fun Dragon721InfoScreen() {
                 text = "Version",
                 style = MaterialTheme.typography.headlineMedium,
             )
-            Text(
-                text = version,
-                style = MaterialTheme.typography.bodyMedium,
-            )
 
-            Spacer(modifier = Modifier.padding(14.dp))
+            if (web3Version.isEmpty()) {
+                val size = with(LocalDensity.current) {
+                    val size = MaterialTheme.typography.titleMedium.fontSize
+                    size.toDp()
+                }
 
-            Text(
-                text = "Token",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = "Symbol",
-                style = MaterialTheme.typography.headlineMedium,
-            )
-            Text(
-                text = symbol,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+                CircularProgressIndicator(modifier = Modifier.size(size))
+            }
+            else {
+                Text(
+                    text = web3Version,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
         }
     }
 }
@@ -116,6 +98,6 @@ private fun Preview() {
         LocalEtherViewModelProvider provides getInspectionModeViewModel(),
         RootNavController provides rememberNavController(),
     ) {
-        Dragon721InfoScreen()
+        Web3Info()
     }
 }
