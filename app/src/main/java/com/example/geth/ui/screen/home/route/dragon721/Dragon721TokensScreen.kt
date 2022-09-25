@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.geth.data.ArtworkToken
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Dragon721TokensScreen() {
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
 
     val loadingStateFlow = remember {
         MutableStateFlow("")
@@ -45,27 +45,26 @@ fun Dragon721TokensScreen() {
 
         launch(Dispatchers.IO) {
             loadingStateFlow.emit("Loading contract")
-            model.dragon721Service.loadContract(
-                contract = defaultContract,
-                account = defaultAccount,
+
+            model.web3ContractService.load(
+                contractAddress = defaultContract.address,
+                accountPrivateKey = defaultAccount.privateKey,
             )
 
+            defaultContract.isLoaded = true
+
             loadingStateFlow.emit("Loading artworks")
-            model.dragon721Service.getAllArtworks()
-                .run {
-                    val list = mutableListOf<ArtworkToken>()
 
-                    forEachIndexed { index, artwork ->
-                        ArtworkToken(
-                            index = index,
-                            context = artwork,
-                        ).run {
-                            list.add(this)
-                        }
-                    }
+            val list = mutableListOf<ArtworkToken>()
 
-                    artworkTokenListStateFlow.emit(list)
-                }
+            model.web3ContractService.artworks.forEachIndexed { index, artwork ->
+                list.add(ArtworkToken(
+                    index = index,
+                    context = artwork,
+                ))
+            }
+
+            artworkTokenListStateFlow.emit(list)
         }
     }
 
@@ -109,14 +108,16 @@ fun Dragon721TokensScreen() {
         return
     }
 
-    Dragon721ArtworksScreen(artworkTokenList = artworkTokenList)
+    Dragon721ArtworksScreen(
+        artworkTokenList = artworkTokenList,
+    )
 }
 
 @Preview
 @Composable
 private fun PreviewTokens() {
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        Dragon721ViewModelProvider provides getInspectionModeViewModel(),
     ) {
         Dragon721TokensScreen()
     }

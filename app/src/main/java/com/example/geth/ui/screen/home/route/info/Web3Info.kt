@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.RootNavController
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Web3Info() {
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
     val rootNavController = RootNavController.current
 
     Scaffold(
@@ -60,7 +60,7 @@ fun Web3Info() {
             val scope = rememberCoroutineScope()
 
             scope.launch(Dispatchers.IO) {
-                flow.emit(model.dragon721Service.getVersion())
+                flow.emit(model.web3ContractService.version)
             }
 
             Text(
@@ -95,7 +95,7 @@ fun Web3Info() {
 @Composable
 private fun Preview() {
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        Dragon721ViewModelProvider provides getInspectionModeViewModel(),
         RootNavController provides rememberNavController(),
     ) {
         Web3Info()

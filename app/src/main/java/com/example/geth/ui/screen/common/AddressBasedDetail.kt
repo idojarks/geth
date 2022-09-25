@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.RootNavController
 import com.example.geth.web3.Web3Utils
@@ -229,7 +229,7 @@ private fun Preview() {
     val rootNavController = rememberNavController()
 
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        Dragon721ViewModelProvider provides getInspectionModeViewModel(),
         RootNavController provides rootNavController,
     ) {
         AddressBasedDetail(

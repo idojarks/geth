@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.RootNavController
 
@@ -242,7 +242,7 @@ fun AddressBasedCard(
 @Composable
 private fun Preview() {
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        Dragon721ViewModelProvider provides getInspectionModeViewModel(),
         RootNavController provides rememberNavController(),
     ) {
         AddressBasedCard(

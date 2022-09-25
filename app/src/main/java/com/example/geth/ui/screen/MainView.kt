@@ -7,13 +7,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import com.example.geth.Contracts_Dragon721_sol_Dragon721
+import com.example.geth.Contracts_Dragon721_sol_Dragon721.Artwork
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.EtherViewModel
-import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.ui.screen.home.HomeScreen
 import com.example.geth.ui.screen.home.route.account.AccountScreen
 import com.example.geth.ui.screen.home.route.contract.ContractsScreen
-import com.example.geth.ui.screen.home.route.dragon721.Dragon721ArtworkDetailScreen
 import com.example.geth.ui.screen.home.route.info.Web3Info
 
 val RootNavController = compositionLocalOf<NavHostController> {
@@ -22,12 +22,12 @@ val RootNavController = compositionLocalOf<NavHostController> {
 
 @Composable
 fun MainView(
-    viewModel: EtherViewModel,
+    viewModel: EtherViewModel<Contracts_Dragon721_sol_Dragon721, Artwork>,
 ) {
     val navController = rememberNavController()
 
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides viewModel,
+        Dragon721ViewModelProvider provides viewModel,
         RootNavController provides navController,
     ) {
         NavHost(
@@ -45,30 +45,6 @@ fun MainView(
             }
             composable("dragon721Info") {
                 Web3Info()
-            }
-            composable(
-                route = "artworkDetail?id={id}&title={title}&artist={artist}",
-                arguments = listOf(
-                    navArgument("id") {
-                        defaultValue = -1
-                    },
-                    navArgument("title") {
-                        defaultValue = ""
-                    },
-                    navArgument("artist") {
-                        defaultValue = ""
-                    },
-                ),
-            ) {
-                val index = checkNotNull(it.arguments?.getInt("id"))
-                val title = checkNotNull(it.arguments?.getString("title"))
-                val artist = checkNotNull(it.arguments?.getString("artist"))
-
-                Dragon721ArtworkDetailScreen(
-                    index = index,
-                    title = title,
-                    artist = artist,
-                )
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.geth.ui.screen.home.route.dragon721
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,22 +12,23 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.example.geth.data.ArtworkToken
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.service.http.HttpClient
-import com.example.geth.ui.screen.RootNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun Dragon721ArtworksScreen(artworkTokenList: List<ArtworkToken>) {
+fun Dragon721ArtworksScreen(
+    artworkTokenList: List<ArtworkToken>,
+) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
 
@@ -72,8 +74,7 @@ fun Dragon721ArtworksScreen(artworkTokenList: List<ArtworkToken>) {
 private fun ArtworkCard(
     artwork: ArtworkToken,
 ) {
-    val model = LocalEtherViewModelProvider.current
-    val rootNavController = RootNavController.current
+    val model = Dragon721ViewModelProvider.current
     val scope = rememberCoroutineScope()
 
     val loadingTokenStateFlow = remember {
@@ -81,12 +82,11 @@ private fun ArtworkCard(
     }
     val loadingTokenState by loadingTokenStateFlow.collectAsState()
 
-    OutlinedCard(
+    Card(
         onClick = {
-            rootNavController.navigate(
-                route = "artworkDetail?id=${artwork.index}&title=${artwork.context.title}&artist=${artwork.context.artist}",
-            )
+            model.clickedArtworkIndex.value = artwork.index
         },
+        colors = CardDefaults.cardColors(containerColor = Color.LightGray),
         modifier = Modifier.fillMaxWidth(),
     ) {
         when (loadingTokenState.first) {
@@ -106,7 +106,7 @@ private fun ArtworkCard(
                     }
                 }
 
-                scope.launch {
+                scope.launch(Dispatchers.IO) {
                     loadingTokenStateFlow.emit(Pair(ArtworkToken.LoadingTokenState.Uri, ""))
                 }
             }
@@ -127,9 +127,10 @@ private fun ArtworkCard(
                     }
                 }
 
-                scope.launch {
+                scope.launch(Dispatchers.IO) {
                     val tokenId = (artwork.index + 1).toLong()
-                    val tokenUri = model.dragon721Service.getTokenUri(tokenId)
+                    val tokenUri = model.web3ContractService.tokenUri(tokenId)
+
                     loadingTokenStateFlow.emit(Pair(ArtworkToken.LoadingTokenState.ImageUri, tokenUri))
                 }
             }
@@ -159,55 +160,105 @@ private fun ArtworkCard(
                     }
                 }
             }
-            ArtworkToken.LoadingTokenState.Done -> Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            ArtworkToken.LoadingTokenState.Done -> {
                 val imageUrl = loadingTokenState.second
 
-                SubcomposeAsyncImage(
-                    model = imageUrl,
-                    contentDescription = artwork.context.title,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxWidth(0.3f)
-                        .padding(8.dp),
-                ) {
-                    when (painter.state) {
-                        is AsyncImagePainter.State.Loading -> CircularProgressIndicator()
-                        is AsyncImagePainter.State.Error -> Text("Error")
-                        is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
-                        is AsyncImagePainter.State.Empty -> Text("Empty")
-                    }
-                }
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(8.dp),
+                        .height(150.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
+                    SubcomposeAsyncImage(
+                        model = imageUrl,
+                        contentDescription = artwork.context.title,
+                    ) {
+                        val painter = this.painter
+                        val imageScope = this
+
+                        Box(contentAlignment = Alignment.Center) {
+                            when (painter.state) {
+                                is AsyncImagePainter.State.Loading -> CircularProgressIndicator()
+                                is AsyncImagePainter.State.Error -> Text("Error")
+                                is AsyncImagePainter.State.Success -> imageScope.SubcomposeAsyncImageContent(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(150.dp),
+                                )
+                                is AsyncImagePainter.State.Empty -> Text("Empty")
+                            }
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    0.75f to Color.Transparent, 1.0f to Color.Black,
+                                ),
+                            ),
+                    )
                     Text(
                         text = artwork.context.title,
                         modifier = Modifier
-                            .padding(4.dp)
-                            .fillMaxHeight()
-                            .fillMaxWidth(),
-                        fontSize = 40.sp,
-                        //fontWeight = FontWeight.Bold,
+                            .padding(horizontal = 14.dp, vertical = 8.dp)
+                            .align(Alignment.BottomStart),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
                     )
-                    Row {
+                }
+
+
+                /*
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .height(90.dp)
+                        .fillMaxWidth(),
+                ) {
+                    val imageUrl = loadingTokenState.second
+
+                    SubcomposeAsyncImage(
+                        model = imageUrl,
+                        contentDescription = artwork.context.title,
+                        alignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth(0.35f)
+                            .padding(8.dp)
+                    ) {
+                        val painter = this.painter
+                        val imageScope = this
+
+                        Box(contentAlignment = Alignment.Center) {
+                            when (painter.state) {
+                                is AsyncImagePainter.State.Loading -> CircularProgressIndicator()
+                                is AsyncImagePainter.State.Error -> Text("Error")
+                                is AsyncImagePainter.State.Success -> imageScope.SubcomposeAsyncImageContent(alignment = Alignment.Center)
+                                is AsyncImagePainter.State.Empty -> Text("Empty")
+                            }
+                        }
+                    }
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                    ) {
                         Text(
-                            text = "by",
-                            modifier = Modifier.padding(4.dp),
-                            fontSize = 14.sp,
+                            text = artwork.context.title,
+                            modifier = Modifier
+                                .padding(4.dp),
+                            style = MaterialTheme.typography.headlineSmall,
                         )
-                        Text(
-                            text = artwork.context.artist,
-                            modifier = Modifier.padding(4.dp),
-                            fontSize = 14.sp,
-                            fontStyle = FontStyle.Italic,
-                        )
+                        Row {
+                            Text(
+                                text = artwork.context.artist,
+                                modifier = Modifier.padding(4.dp),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
+                */
             }
         }
     }

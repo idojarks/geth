@@ -7,13 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.example.geth.Contracts_Dragon721_sol_Dragon721.Artwork
 import com.example.geth.data.EtherViewModel
 import com.example.geth.ui.screen.MainView
 import com.example.geth.ui.theme.AppTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private val model: EtherViewModel by viewModel()
+    private val model: EtherViewModel<Contracts_Dragon721_sol_Dragon721, Artwork> by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

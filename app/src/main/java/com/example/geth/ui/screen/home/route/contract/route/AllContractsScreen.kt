@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.EtherContract
-import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.RootNavController
 import com.example.geth.ui.screen.common.AddressBasedCard
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 fun AllContractsScreen(
     navController: NavController,
 ) {
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
 
     val contracts = model.contracts.observeAsState()
     val progressStateFlow = remember {
@@ -86,17 +86,17 @@ fun AllContractsScreen(
 fun ContractSymbol(
     contract: EtherContract,
 ) {
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
 
     val symbolFlow = remember {
         MutableStateFlow("")
     }
     val symbol by symbolFlow.collectAsState()
 
-    LaunchedEffect(key1 = contract.web3Contract) {
-        contract.web3Contract?.let {
+    LaunchedEffect(key1 = contract, key2 = contract.isLoaded) {
+        if (contract.isLoaded) {
             launch(Dispatchers.IO) {
-                symbolFlow.emit(model.dragon721Service.getSymbol(it))
+                symbolFlow.emit(model.web3ContractService.symbol)
             }
         }
     }
@@ -131,7 +131,7 @@ fun ContractSymbol(
 @Composable
 private fun preview() {
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        Dragon721ViewModelProvider provides getInspectionModeViewModel(),
         RootNavController provides rememberNavController(),
     ) {
         AllContractsScreen(

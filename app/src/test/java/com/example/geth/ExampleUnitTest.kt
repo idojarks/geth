@@ -1,14 +1,7 @@
 package com.example.geth
 
-import com.example.geth.data.EtherUrl
-import com.example.geth.service.blockchain.Web3Dragon721Service
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
+import com.example.geth.service.blockchain.Dragon721ContractService
 import org.junit.Test
-import java.math.BigInteger
-import kotlin.io.path.Path
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -16,12 +9,13 @@ import kotlin.io.path.Path
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+    /*
     @Test
     fun downloadToken() {
         var filename = ""
 
         runBlocking {
-            Web3Dragon721Service().run {
+            Dragon721ContractService().run {
                 loadContract(
                     contractAddress = EtherUrl.contractAddress,
                     privateKey = "ef1162540ed5189c7f7eb5c9bf274767e95aad0559b3920eb3dc50c35aecd465",
@@ -38,6 +32,8 @@ class ExampleUnitTest {
         assertEquals(filename, "eye.png")
     }
 
+     */
+
     @Test
     fun getGasPrice() {
         RealtimeGasProvider().run {
@@ -47,13 +43,13 @@ class ExampleUnitTest {
 
     @Test
     fun allArtworks() {
-        Web3Dragon721Service().run {
-            loadContract(
-                contractAddress = EtherUrl.contractAddress,
-                privateKey = "ef1162540ed5189c7f7eb5c9bf274767e95aad0559b3920eb3dc50c35aecd465",
+        Dragon721ContractService().run {
+            load(
+                contractAddress = "",
+                accountPrivateKey = "",
             )
 
-            getAllArtworks().let {
+            artworks.let {
                 it.forEach {
                     it.metadataURI
                 }

@@ -6,12 +6,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.EtherAccount
 import com.example.geth.data.EtherViewModel
-import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.service.account.InspectionModeAccountRepository
 import com.example.geth.service.account.add
-import com.example.geth.service.blockchain.InspectionModeDragon721Service
+import com.example.geth.service.blockchain.InspectionModeWeb3ContractService
 import com.example.geth.service.contract.ContractInspectionModeRepository
 import com.example.geth.ui.screen.common.AddressBasedDetail
 
@@ -20,7 +20,7 @@ fun AccountDetailScreen(
     navController: NavController,
     account: EtherAccount? = null,
 ) {
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
 
     val (title, doneButtonName) = account?.let {
         Pair(
@@ -98,11 +98,11 @@ private fun Preview() {
     val model = EtherViewModel(
         accountRepository = InspectionModeAccountRepository(),
         contractRepository = ContractInspectionModeRepository(),
-        dragon721Service = InspectionModeDragon721Service(),
+        web3ContractService = InspectionModeWeb3ContractService(),
     )
 
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides model,
+        Dragon721ViewModelProvider provides model,
     ) {
         val navController = rememberNavController()
 

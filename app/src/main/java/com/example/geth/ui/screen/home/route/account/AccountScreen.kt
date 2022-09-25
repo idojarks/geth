@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.ui.screen.AccountSubScreen
 import com.example.geth.ui.screen.home.route.account.route.AccountDetailScreen
 import com.example.geth.ui.screen.home.route.account.route.AllAccountsScreen
@@ -13,7 +13,7 @@ import com.example.geth.ui.screen.home.route.account.route.AllAccountsScreen
 @Composable
 fun AccountScreen() {
     val navController = rememberNavController()
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
 
     NavHost(
         navController = navController,

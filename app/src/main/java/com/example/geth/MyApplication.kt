@@ -2,11 +2,12 @@ package com.example.geth
 
 import android.app.Application
 import android.content.Context
+import com.example.geth.Contracts_Dragon721_sol_Dragon721.Artwork
 import com.example.geth.data.EtherViewModel
 import com.example.geth.service.account.AccountRepository
 import com.example.geth.service.account.FileAccountRepository
-import com.example.geth.service.blockchain.Dragon721Service
-import com.example.geth.service.blockchain.Web3Dragon721Service
+import com.example.geth.service.blockchain.Dragon721ContractService
+import com.example.geth.service.blockchain.Web3ContractService
 import com.example.geth.service.contract.ContractFileRepository
 import com.example.geth.service.contract.ContractRepository
 import com.google.android.material.color.DynamicColors
@@ -49,12 +50,12 @@ class MyApplication : Application() {
                 )
             }
 
-            single<Dragon721Service> {
-                Web3Dragon721Service()
+            single<Web3ContractService<Contracts_Dragon721_sol_Dragon721, Artwork>> {
+                Dragon721ContractService()
             }
 
             viewModel {
-                EtherViewModel(get(), get(), get())
+                EtherViewModel(get(), get(), get<Web3ContractService<Contracts_Dragon721_sol_Dragon721, Artwork>>())
             }
         }
 

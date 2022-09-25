@@ -6,13 +6,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.geth.Contracts_Dragon721_sol_Dragon721
+import com.example.geth.Contracts_Dragon721_sol_Dragon721.Artwork
 import com.example.geth.service.account.AccountRepository
 import com.example.geth.service.account.InspectionModeAccountRepository
-import com.example.geth.service.blockchain.Dragon721Service
-import com.example.geth.service.blockchain.InspectionModeDragon721Service
+import com.example.geth.service.blockchain.InspectionModeWeb3ContractService
+import com.example.geth.service.blockchain.Web3ContractService
 import com.example.geth.service.contract.ContractInspectionModeRepository
 import com.example.geth.service.contract.ContractRepository
-import kotlinx.coroutines.coroutineScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.compose.getViewModel
@@ -20,36 +20,16 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-class EtherViewModel(
+class EtherViewModel<T, out R>(
     val accountRepository: AccountRepository,
     val contractRepository: ContractRepository,
-    val dragon721Service: Dragon721Service,
+    val web3ContractService: Web3ContractService<T, R>,
 ) : ViewModel() {
     val accounts = MutableLiveData<MutableList<EtherAccount>>(mutableListOf())
-    val defaultAccount = MutableLiveData<EtherAccount>()
-    val defaultContract = MutableLiveData<EtherContract>()
-    val tokenUrlList = MutableLiveData(mutableListOf<String>())
-
-    //val artworks = MutableLiveData<List<Contracts_Dragon721_sol_Dragon721.Artwork>>(emptyList())
-    val artworks by lazy {
-        dragon721Service.getAllArtworks()
-    }
-
-    val reloadAccounts = MutableLiveData(true)
-
+    private val defaultAccount = MutableLiveData<EtherAccount>()
+    val clickedArtworkIndex = MutableLiveData(-1)
+    private val reloadAccounts = MutableLiveData(true)
     val contracts = MutableLiveData<MutableList<EtherContract>>(mutableListOf())
-
-    suspend fun loadAccounts() = coroutineScope {
-        accounts.postValue(accountRepository.accounts)
-        reloadAccounts.postValue(false)
-    }
-/*
-    fun addAccount(account: EtherAccount) {
-        accounts.value = accountRepository.addAccount(account)
-        loadDefaultAccount()
-    }
-
- */
 
     fun deleteAccount(account: EtherAccount) {
         accountRepository.deleteAccount(account)
@@ -57,16 +37,6 @@ class EtherViewModel(
 
         reloadAccounts.value = true
     }
-/*
-    fun editAccount(
-        srcAccount: EtherAccount,
-        dstAccount: EtherAccount,
-    ) {
-        accounts.value = accountRepository.editAccount(srcAccount, dstAccount)
-        loadDefaultAccount()
-    }
-
- */
 
     fun getAccount(address: String): EtherAccount? {
         return accountRepository.accounts.find {
@@ -81,66 +51,17 @@ class EtherViewModel(
         reloadAccounts.value = true
     }
 
-    fun loadDefaultAccount() {
+    private fun loadDefaultAccount() {
         defaultAccount.value = accountRepository.getDefault()
-    }
-
-    /*
-        fun loadDefaultContract() {
-            defaultContract.value = contractRepository.getDefault()
-        }
-
-     */
-/*
-    fun loadContract(): Boolean {
-        val defaultAccount = accountRepository.getDefault()
-            ?: return false
-        val defaultContract = contractRepository.getDefault()
-            ?: return false
-
-        dragon721Service.loadContract(
-            contractAddress = defaultContract.address,
-            privateKey = defaultAccount.privateKey,
-        )
-
-        return true
-    }
-
- */
-/*
-    fun loadArtworks(): List<Contracts_Dragon721_sol_Dragon721.Artwork> {
-        return dragon721Service.getAllArtworks()
-    }
-
- */
-/*
-    fun loadDefaultAccountInCoroutine() {
-        accountRepository.accounts
-            .find {
-                if (it.isDefault) {
-                    println("default account loaded : $it")
-                }
-
-                it.isDefault
-            }
-            ?.let {
-                defaultAccount.postValue(it)
-            }
-    }
-*/
-    fun getArtwork(index: Int): Result<Contracts_Dragon721_sol_Dragon721.Artwork?> {
-        return kotlin.runCatching {
-            artworks.elementAt(index)
-        }
     }
 }
 
-val LocalEtherViewModelProvider = compositionLocalOf<EtherViewModel> {
-    error("LocalEtherViewModelProvider not provide default factory")
+val Dragon721ViewModelProvider = compositionLocalOf<EtherViewModel<Contracts_Dragon721_sol_Dragon721, Artwork>> {
+    error("Dragon721ViewModelProvider not provide default factory")
 }
 
 @Composable
-fun getInspectionModeViewModel(): EtherViewModel {
+fun getInspectionModeViewModel(): EtherViewModel<Contracts_Dragon721_sol_Dragon721, Artwork> {
     val modelModule = module {
         single<AccountRepository> {
             InspectionModeAccountRepository()
@@ -150,12 +71,12 @@ fun getInspectionModeViewModel(): EtherViewModel {
             ContractInspectionModeRepository()
         }
 
-        single<Dragon721Service> {
-            InspectionModeDragon721Service()
+        single<Web3ContractService<Contracts_Dragon721_sol_Dragon721, Artwork>> {
+            InspectionModeWeb3ContractService()
         }
 
         viewModel {
-            EtherViewModel(get(), get(), get())
+            EtherViewModel(get(), get(), get<Web3ContractService<Contracts_Dragon721_sol_Dragon721, Artwork>>())
         }
     }
 

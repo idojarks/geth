@@ -5,14 +5,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.geth.data.LocalEtherViewModelProvider
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.ui.screen.home.route.contract.route.AllContractsScreen
 import com.example.geth.ui.screen.home.route.contract.route.ContractDetailScreen
 
 @Composable
 fun ContractsScreen() {
     val navController = rememberNavController()
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
 
     NavHost(
         navController = navController,

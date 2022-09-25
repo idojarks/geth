@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.geth.R
+import com.example.geth.data.Dragon721ViewModelProvider
 import com.example.geth.data.EtherAccount
-import com.example.geth.data.LocalEtherViewModelProvider
 import com.example.geth.data.getInspectionModeViewModel
 import com.example.geth.ui.screen.RootNavController
 import com.example.geth.ui.screen.common.AddressBasedCard
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 fun AllAccountsScreen(
     navController: NavController,
 ) {
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
 
     val accounts = model.accounts.observeAsState()
     //val reloadAccounts = model.reloadAccounts.observeAsState(true)
@@ -101,7 +101,7 @@ fun AllAccountsScreen(
 
 @Composable
 fun AccountBalance(account: EtherAccount) {
-    val model = LocalEtherViewModelProvider.current
+    val model = Dragon721ViewModelProvider.current
     val coroutineScope = rememberCoroutineScope()
     val balanceStateFlow = remember {
         MutableStateFlow("")
@@ -109,10 +109,9 @@ fun AccountBalance(account: EtherAccount) {
     val balance by balanceStateFlow.collectAsState()
 
     coroutineScope.launch(Dispatchers.IO) {
-        model.dragon721Service.getBalance(account.address)
-            .run {
-                balanceStateFlow.emit(this)
-            }
+        val accountBalance = model.web3ContractService.balance(account.address)
+
+        balanceStateFlow.emit(accountBalance)
     }
 
     Text(
@@ -145,7 +144,7 @@ fun AccountBalance(account: EtherAccount) {
 @Composable
 private fun Preview() {
     CompositionLocalProvider(
-        LocalEtherViewModelProvider provides getInspectionModeViewModel(),
+        Dragon721ViewModelProvider provides getInspectionModeViewModel(),
         RootNavController provides rememberNavController(),
     ) {
         AllAccountsScreen(
