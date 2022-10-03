@@ -2,6 +2,10 @@ package com.example.geth
 
 import android.app.Application
 import android.content.Context
+import coil.ImageLoader
+import coil.ImageLoaderFactory
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
 import com.example.geth.Contracts_Dragon721_sol_Dragon721.Artwork
 import com.example.geth.data.EtherViewModel
 import com.example.geth.service.account.AccountRepository
@@ -17,7 +21,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-class MyApplication : Application() {
+class MyApplication : Application(), ImageLoaderFactory {
     init {
         instance = this
     }
@@ -64,5 +68,21 @@ class MyApplication : Application() {
             androidContext(this@MyApplication)
             modules(modelModule)
         }
+    }
+
+    override fun newImageLoader(): ImageLoader {
+        return ImageLoader.Builder(this)
+            .memoryCache {
+                MemoryCache.Builder(this)
+                    .maxSizePercent(0.25)
+                    .build()
+            }
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(this.cacheDir.resolve("image_cache"))
+                    .maxSizePercent(1.0)
+                    .build()
+            }
+            .build()
     }
 }

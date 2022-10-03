@@ -155,17 +155,17 @@ private fun ArtworkImage(
     index: Int,
     artwork: Artwork,
 ) {
-    val loadingTokenStateFlow = remember {
-        MutableStateFlow<Pair<ArtworkToken.LoadingTokenState, String>>(Pair(ArtworkToken.LoadingTokenState.Start, ""))
+    val loadingStateFlow = remember {
+        MutableStateFlow<Pair<ArtworkToken.LoadingState, String>>(Pair(ArtworkToken.LoadingState.Start, ""))
     }
-    val loadingTokenState by loadingTokenStateFlow.collectAsState()
+    val loadingTokenState by loadingStateFlow.collectAsState()
     val scope = rememberCoroutineScope()
     val model = Dragon721ViewModelProvider.current
 
     val (loadingState, loadingUrl) = loadingTokenState
 
     when (loadingState) {
-        ArtworkToken.LoadingTokenState.Start -> {
+        ArtworkToken.LoadingState.Start -> {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center,
@@ -180,10 +180,10 @@ private fun ArtworkImage(
             }
 
             scope.launch(Dispatchers.IO) {
-                loadingTokenStateFlow.emit(Pair(ArtworkToken.LoadingTokenState.Uri, ""))
+                loadingStateFlow.emit(Pair(ArtworkToken.LoadingState.Uri, ""))
             }
         }
-        ArtworkToken.LoadingTokenState.Uri -> {
+        ArtworkToken.LoadingState.Uri -> {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -204,10 +204,10 @@ private fun ArtworkImage(
                 val tokenId = (index + 1).toLong()
                 val tokenUri = model.web3ContractService.tokenUri(tokenId)
 
-                loadingTokenStateFlow.emit(Pair(ArtworkToken.LoadingTokenState.ImageUri, tokenUri))
+                loadingStateFlow.emit(Pair(ArtworkToken.LoadingState.ImageUri, tokenUri))
             }
         }
-        ArtworkToken.LoadingTokenState.ImageUri -> {
+        ArtworkToken.LoadingState.ImageUri -> {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -228,11 +228,11 @@ private fun ArtworkImage(
                 val imageUrl = HttpClient.getTokenImageUrl(loadingUrl)
 
                 imageUrl?.let { url ->
-                    loadingTokenStateFlow.emit(Pair(ArtworkToken.LoadingTokenState.Done, url))
+                    loadingStateFlow.emit(Pair(ArtworkToken.LoadingState.Done, url))
                 }
             }
         }
-        ArtworkToken.LoadingTokenState.Done -> Row(
+        ArtworkToken.LoadingState.Done -> Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SubcomposeAsyncImage(

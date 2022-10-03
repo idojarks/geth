@@ -1,5 +1,7 @@
 package com.example.geth.ui.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
@@ -20,6 +22,7 @@ val RootNavController = compositionLocalOf<NavHostController> {
     error("")
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainView(
     viewModel: EtherViewModel<Contracts_Dragon721_sol_Dragon721, Artwork>,
@@ -29,6 +32,7 @@ fun MainView(
     CompositionLocalProvider(
         Dragon721ViewModelProvider provides viewModel,
         RootNavController provides navController,
+        LocalOverscrollConfiguration provides null,
     ) {
         NavHost(
             navController = navController,
